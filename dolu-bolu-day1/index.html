@@ -1,0 +1,795 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>Dolu Bolu Day 1</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="assets/art.js"></script>
+    <style>
+      @font-face { font-family: "PoppinsXB"; src: url("assets/fonts/Poppins-ExtraBold.ttf") format("truetype"); font-weight: 800; }
+      @font-face { font-family: "PoppinsB"; src: url("assets/fonts/Poppins-Bold.ttf") format("truetype"); font-weight: 700; }
+      @font-face { font-family: "PoppinsSB"; src: url("assets/fonts/Poppins-SemiBold.ttf") format("truetype"); font-weight: 600; }
+      @font-face { font-family: "PoppinsM"; src: url("assets/fonts/Poppins-Medium.ttf") format("truetype"); font-weight: 500; }
+      :root {
+        --saffron: #ff9933; --saffron-deep: #e8751a; --brown: #3b1f0e; --yellow: #ffd34d;
+        --red: #ff3b30; --blue: #2d7bff; --cyan: #00d4ff; --purple: #8b5cf6; --ink: #0b0716;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #000; }
+      #root { position: relative; width: 100%; height: 100%; overflow: hidden; font-family: "PoppinsB", sans-serif; color: #fff; }
+      .clip { position: absolute; inset: 0; overflow: hidden; }
+      .cam { position: absolute; inset: 0; transform-origin: 50% 50%; }
+      .fill { position: absolute; inset: 0; width: 100%; height: 100%; }
+      .abs { position: absolute; }
+      .street { position: absolute; inset: 0; width: 100%; height: 100%; }
+      .char { position: absolute; display: block; overflow: visible; }
+      .xb { font-family: "PoppinsXB", sans-serif; }
+      .stroke { paint-order: stroke fill; -webkit-text-stroke: 14px #000; }
+      .tech-bg { background: radial-gradient(120% 80% at 50% 30%, #2a1b6b 0%, #120a35 45%, #05030f 100%); }
+      .grid-bg { background-image: linear-gradient(rgba(45,123,255,0.12) 2px, transparent 2px), linear-gradient(90deg, rgba(45,123,255,0.12) 2px, transparent 2px); background-size: 90px 90px; }
+      .glass { background: rgba(255,255,255,0.08); border: 2px solid rgba(255,255,255,0.18); border-radius: 36px; }
+      .chip { display: inline-block; padding: 14px 30px; border-radius: 999px; font-family: "PoppinsB"; }
+
+      /* ---------- captions ---------- */
+      #captions { z-index: 50; pointer-events: none; }
+      .cap { position: absolute; left: 60px; right: 60px; top: 1270px; height: 300px; display: flex; flex-wrap: wrap; align-content: center; justify-content: center; gap: 0 26px; opacity: 0; }
+      .cap .w { display: inline-block; font-family: "PoppinsXB"; font-size: 92px; line-height: 1.12; color: #fff; paint-order: stroke fill; -webkit-text-stroke: 16px #000; text-shadow: 0 10px 0 rgba(0,0,0,0.35); transform-origin: 50% 70%; }
+      .cap .w.hl { color: var(--yellow); }
+      .cap .w.red { color: var(--red); }
+      .cap.big .w { font-size: 132px; }
+      .cap.small .w { font-size: 78px; }
+
+      /* ---------- shared HUD pieces ---------- */
+      .counter { position: absolute; right: 50px; top: 120px; display: flex; align-items: center; gap: 18px; padding: 18px 34px; background: rgba(20,8,0,0.72); border: 4px solid var(--yellow); border-radius: 28px; }
+      .counter .num { font-family: "PoppinsXB"; font-size: 92px; color: var(--yellow); min-width: 190px; text-align: right; }
+      .counter svg { width: 78px; height: 78px; }
+      .stamp { position: absolute; font-family: "PoppinsXB"; color: var(--red); border: 14px solid var(--red); border-radius: 26px; padding: 6px 40px; letter-spacing: 4px; background: rgba(255,255,255,0.06); }
+      .bubble { position: absolute; background: #fff; color: #222; border-radius: 40px; padding: 30px 44px; font-family: "PoppinsB"; box-shadow: 0 20px 60px rgba(0,0,0,0.35); }
+      .daybar { position: absolute; left: 90px; right: 90px; height: 150px; display: flex; gap: 22px; }
+      .daybar .d { flex: 1; height: 150px; border-radius: 30px; background: rgba(255,255,255,0.08); border: 3px solid rgba(255,255,255,0.22); display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: "PoppinsXB"; font-size: 30px; color: rgba(255,255,255,0.6); }
+      .daybar .d b { font-size: 64px; line-height: 1; }
+      .daybar .d.on { background: linear-gradient(160deg, var(--blue), var(--purple)); color: #fff; border-color: #b9a6ff; box-shadow: 0 0 60px rgba(139,92,246,0.8); }
+      .phone { position: absolute; width: 560px; height: 1060px; border-radius: 80px; background: #111; border: 14px solid #2a2a33; box-shadow: 0 40px 120px rgba(0,0,0,0.6); overflow: hidden; }
+      .phone .scr { position: absolute; inset: 0; background: linear-gradient(180deg, #151a2e, #0d1020); padding: 110px 34px 30px; display: flex; flex-direction: column; gap: 26px; }
+      .phone .top { position: absolute; left: 0; right: 0; top: 0; height: 96px; display: flex; align-items: center; justify-content: center; gap: 14px; background: rgba(255,255,255,0.04); font-family: "PoppinsSB"; font-size: 30px; color: #cfd6ff; }
+      .msg { max-width: 90%; padding: 24px 30px; border-radius: 34px; font-family: "PoppinsSB"; font-size: 34px; line-height: 1.3; }
+      .msg.me { align-self: flex-end; background: var(--blue); color: #fff; border-bottom-right-radius: 10px; }
+      .msg.ai { align-self: flex-start; background: #262b45; color: #fff; border-bottom-left-radius: 10px; }
+      .dots { display: flex; gap: 12px; padding: 26px 34px; background: #262b45; border-radius: 34px; align-self: flex-start; }
+      .dots i { width: 18px; height: 18px; border-radius: 50%; background: #9aa6ff; display: block; }
+      .lowerthird { position: absolute; left: 60px; top: 1080px; display: flex; align-items: center; gap: 24px; padding: 20px 40px 20px 22px; background: linear-gradient(90deg, var(--saffron-deep), var(--saffron)); border-radius: 30px; box-shadow: 0 16px 50px rgba(0,0,0,0.35); }
+      .lowerthird .ico { width: 92px; height: 92px; border-radius: 22px; background: var(--brown); display: grid; place-items: center; }
+      .lowerthird .t1 { font-family: "PoppinsXB"; font-size: 58px; color: #fff; line-height: 1; }
+      .lowerthird .t2 { font-family: "PoppinsSB"; font-size: 28px; color: var(--brown); }
+      .confetti i { position: absolute; width: 22px; height: 34px; border-radius: 4px; display: block; }
+      .optrow { display: flex; align-items: center; gap: 24px; }
+      .optrow .lbl { width: 300px; font-family: "PoppinsXB"; font-size: 52px; text-align: right; }
+      .optrow .bar { height: 54px; border-radius: 27px; background: linear-gradient(90deg, var(--blue), var(--cyan)); display: block; transform-origin: 0 50%; }
+      .optrow .pct { font-family: "PoppinsB"; font-size: 40px; color: #cfe4ff; width: 120px; }
+      .card { position: absolute; width: 300px; height: 230px; border-radius: 34px; background: linear-gradient(160deg, #fff7e8, #ffe2b3); color: var(--brown); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; font-family: "PoppinsXB"; font-size: 34px; text-align: center; line-height: 1.15; padding: 0 14px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); border: 5px solid var(--saffron); }
+      .card .ic { width: 84px; height: 84px; border-radius: 50%; background: var(--saffron); display: grid; place-items: center; font-size: 50px; color: #fff; }
+      .btn { display: inline-flex; align-items: center; justify-content: center; height: 120px; padding: 0 56px; border-radius: 60px; font-family: "PoppinsXB"; font-size: 50px; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-width="1080" data-height="1920" data-duration="92.2">
+
+      <!-- S1 Hook 0 - 8.2 -->
+      <section id="s1" class="clip" data-start="0" data-duration="8.2" data-track-index="1">
+        <div class="cam" id="s1-cam">
+          <div class="fill" id="s1-street"></div>
+          <svg class="fill" id="s1-crowd" viewBox="0 0 1080 1920" preserveAspectRatio="xMidYMid slice"></svg>
+          <svg class="fill" id="s1-handi" viewBox="0 0 1080 1920" preserveAspectRatio="xMidYMid slice"></svg>
+          <div class="abs" id="s1-dolu" style="left:10px; top:930px; width:420px; height:800px;"></div>
+          <div class="bubble" id="s1-bubble" style="left:330px; top:520px; width:520px; font-size:40px; text-align:center;">
+            <div style="font-size:26px; color:#2d7bff; font-family:PoppinsXB; letter-spacing:2px;">AI REPLY</div>
+            Weekend offer: Buy 1 Get 1 FREE!
+            <svg class="abs" id="s1-crack" viewBox="0 0 520 200" style="left:0; top:0; width:100%; height:100%; overflow:visible;" fill="none" stroke="#333" stroke-width="5" stroke-linecap="round">
+              <path d="M260 0 L240 60 L285 95 L250 200"/><path d="M240 60 L150 80 L90 140"/><path d="M285 95 L380 70 L470 120"/><path d="M250 140 L180 190"/>
+            </svg>
+          </div>
+        </div>
+        <div class="counter" id="s1-counter">
+          <svg viewBox="0 0 24 24" fill="#FFD34D"><circle cx="8" cy="7" r="4"/><circle cx="17" cy="8" r="3"/><path d="M1 21c0-4 3-7 7-7s7 3 7 7z"/><path d="M15 21c0-2-.6-4-1.8-5.4 1-.4 2-.6 3-.6 3.3 0 6 2.4 6 6z"/></svg>
+          <span class="num" id="s1-num">0</span>
+        </div>
+        <div class="abs" id="s1-profit" style="left:140px; right:140px; top:340px; height:520px; border-radius:50px; background:rgba(15,6,0,0.86); border:6px solid #ff3b30; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+          <div class="xb" style="font-size:60px; color:#fff; letter-spacing:6px;">PROFIT</div>
+          <div class="xb" style="font-size:250px; color:#ff3b30; line-height:1;">₹0</div>
+        </div>
+      </section>
+
+      <!-- S2 Series intro 8.2 - 11.0 -->
+      <section id="s2" class="clip tech-bg" data-start="8.2" data-duration="2.8" data-track-index="1">
+        <div class="fill grid-bg" style="opacity:0.6"></div>
+        <div class="fill" id="s2-freeze" style="filter:saturate(0.2) brightness(0.8);"></div>
+        <div class="abs xb" id="s2-title" style="left:0; right:0; top:330px; text-align:center; font-size:150px; line-height:1; text-shadow: 0 0 40px rgba(139,92,246,0.9);">AI NA ENNA?</div>
+        <div class="abs" id="s2-sub" style="left:0; right:0; top:500px; text-align:center; font-family:PoppinsSB; font-size:40px; color:#b9c3ff; letter-spacing:8px;">5 NAAL SERIES</div>
+        <div class="daybar" id="s2-days" style="top:640px;">
+          <div class="d" id="s2-d1">DAY<b>1</b></div><div class="d">DAY<b>2</b></div><div class="d">DAY<b>3</b></div><div class="d">DAY<b>4</b></div><div class="d">DAY<b>5</b></div>
+        </div>
+        <div class="abs" id="s2-level" style="left:140px; right:140px; top:900px;">
+          <div style="display:flex; justify-content:space-between; font-family:PoppinsXB; font-size:44px; margin-bottom:20px;"><span>LEVEL <span id="s2-lvl">0</span></span><span style="color:#FFD34D;">🏆</span></div>
+          <div style="height:60px; border-radius:30px; background:rgba(255,255,255,0.1); border:3px solid rgba(255,255,255,0.25); overflow:hidden;"><div id="s2-fill" style="width:100%; height:100%; background:linear-gradient(90deg,#ff9933,#ffd34d); transform-origin:0 50%; display:block;"></div></div>
+          <div style="display:flex; justify-content:space-between; font-family:PoppinsB; font-size:30px; color:#9aa6ff; margin-top:14px;"><span>0</span><span>1</span><span>2</span><span>3</span></div>
+        </div>
+      </section>
+
+      <!-- S3 Dolu asks ChatGPT 11.0 - 19.4 -->
+      <section id="s3" class="clip" data-start="11" data-duration="8.4" data-track-index="1">
+        <div class="cam" id="s3-cam">
+          <div class="fill" id="s3-street"></div>
+          <svg class="fill" id="s3-handi" viewBox="0 0 1080 1920" preserveAspectRatio="xMidYMid slice"></svg>
+        </div>
+        <div class="fill" id="s3-macro" style="background:radial-gradient(circle at 50% 55%, #5a2a0c, #1a0a02);">
+          <svg class="fill" id="s3-macro-svg" viewBox="0 0 1080 1920" preserveAspectRatio="xMidYMid slice"></svg>
+        </div>
+        <div class="fill" id="s3-close" style="background:linear-gradient(180deg,#f7d39a,#d98c3f);">
+          <svg class="fill" viewBox="0 0 1080 1920" preserveAspectRatio="xMidYMid slice"><rect x="0" y="1380" width="1080" height="540" fill="#7A4A26"/><rect x="0" y="1380" width="1080" height="26" fill="#A86A3C"/><rect x="760" y="300" width="240" height="320" rx="8" fill="none" stroke="#6b3a1e" stroke-width="12" stroke-dasharray="24 16"/><text x="880" y="480" text-anchor="middle" font-family="PoppinsB" font-size="30" fill="#6b3a1e">POSTER?</text></svg>
+          <div class="abs" id="s3-dolu" style="left:40px; top:560px; width:620px; height:1180px;"></div>
+          <div class="phone" id="s3-phone" style="left:470px; top:330px;">
+            <div class="top"><svg width="40" height="40" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#8b5cf6"/><path d="M7 12h10M12 7v10" stroke="#fff" stroke-width="2.5"/></svg>AI Chat</div>
+            <div class="scr">
+              <div class="msg me" id="s3-msg"><span id="s3-typed"></span><span id="s3-cursor" style="display:inline-block; width:4px; height:38px; background:#fff; vertical-align:middle;"></span></div>
+              <div class="dots" id="s3-dots"><i></i><i></i><i></i></div>
+            </div>
+          </div>
+        </div>
+        <div class="lowerthird" id="s3-tag">
+          <div class="ico"><svg width="70" height="70" viewBox="-130 -40 260 160"><path d="M-110 0 Q-130 90 -60 100 L60 100 Q130 90 110 0 Z" fill="#c9ccd3"/><ellipse cx="0" cy="0" rx="112" ry="26" fill="#e3e5ea"/><ellipse cx="0" cy="2" rx="96" ry="18" fill="#F2B640"/></svg></div>
+          <div><div class="t1">Dolu Anna</div><div class="t2">Owner, Dolu Biryani Kadai</div></div>
+        </div>
+      </section>
+
+      <!-- S4 Buy 1 Get 1 Free 19.4 - 28.8 -->
+      <section id="s4" class="clip" data-start="19.4" data-duration="9.4" data-track-index="1">
+        <div class="fill" id="s4-close" style="background:radial-gradient(circle at 40% 40%, #ffd98f, #e8751a);">
+          <div class="abs" id="s4-dolu" style="left:-80px; top:300px; width:900px; height:1710px;"></div>
+          <div class="phone" id="s4-phone" style="left:560px; top:620px; width:470px; height:880px;">
+            <div class="top">AI Chat</div>
+            <div class="scr">
+              <div class="msg me" style="font-size:28px;">oru catchy offer ezhudhi kudu</div>
+              <div class="msg ai" id="s4-reply" style="font-size:30px;">✨ Weekend Special!<br />BUY 1 GET 1 FREE! 🍗</div>
+            </div>
+          </div>
+          <svg class="abs" id="s4-sparkles" viewBox="0 0 400 400" style="left:620px; top:640px; width:400px; height:400px;" fill="#fff">
+            <path d="M60 60 L70 90 L100 100 L70 110 L60 140 L50 110 L20 100 L50 90 Z"/><path d="M320 40 L328 64 L352 72 L328 80 L320 104 L312 80 L288 72 L312 64 Z"/><path d="M300 280 L310 310 L340 320 L310 330 L300 360 L290 330 L260 320 L290 310 Z"/>
+          </svg>
+        </div>
+        <div class="fill" id="s4-boom" style="background:radial-gradient(circle at 50% 45%, #ffd34d 0%, #ff9933 45%, #c0391b 100%);">
+          <svg class="fill" id="s4-burst" viewBox="0 0 1080 1920"><g transform="translate(540 820)" fill="rgba(255,255,255,0.28)" id="s4-rays"></g></svg>
+          <div class="confetti fill" id="s4-confetti"></div>
+          <div class="abs xb" id="s4-b1g1" style="left:0; right:0; top:440px; text-align:center; line-height:0.95;">
+            <div class="stroke" style="font-size:250px; color:#fff; text-shadow:0 18px 0 #8a2a0c, 0 30px 60px rgba(0,0,0,0.4);">BUY 1</div>
+            <div class="stroke" style="font-size:250px; color:#ffd34d; text-shadow:0 18px 0 #8a2a0c, 0 30px 60px rgba(0,0,0,0.4);">GET 1</div>
+            <div class="stroke" style="font-size:300px; color:#ff3b30; text-shadow:0 18px 0 #5a1505, 0 30px 60px rgba(0,0,0,0.4);">FREE!</div>
+          </div>
+        </div>
+        <div class="fill" id="s4-print" style="background:linear-gradient(180deg,#3b1f0e,#1d0f06);">
+          <div class="abs" id="s4-printer" style="left:240px; top:620px; width:600px; height:300px; border-radius:40px; background:linear-gradient(180deg,#e9e9ee,#b9bcc6); box-shadow:0 30px 80px rgba(0,0,0,0.5);">
+            <div style="position:absolute; left:80px; right:80px; top:120px; height:30px; border-radius:15px; background:#222;"></div>
+            <div style="position:absolute; right:50px; top:40px; width:30px; height:30px; border-radius:50%; background:#3ce07a;"></div>
+          </div>
+          <div class="abs" id="s4-paper" style="left:320px; top:770px; width:440px; height:600px; background:#fff8e6; border-radius:10px; box-shadow:0 20px 50px rgba(0,0,0,0.4); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; border:10px solid #ff9933;">
+            <div class="xb" style="font-size:42px; color:#3b1f0e;">DOLU BIRYANI</div>
+            <div class="xb" style="font-size:96px; color:#e8751a; line-height:1;">BUY 1</div>
+            <div class="xb" style="font-size:96px; color:#e8751a; line-height:1;">GET 1</div>
+            <div class="xb" style="font-size:110px; color:#ff3b30; line-height:1;">FREE!</div>
+            <div style="font-family:PoppinsB; font-size:28px; color:#3b1f0e; margin-top:10px;">This Weekend Only</div>
+          </div>
+        </div>
+        <div class="fill" id="s4-wall">
+          <div class="fill" id="s4-street"></div>
+          <div class="abs" id="s4-poster" style="left:150px; top:560px; width:250px; height:330px; background:#fff8e6; border:8px solid #ff9933; border-radius:8px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; box-shadow:0 14px 30px rgba(0,0,0,0.35);">
+            <div class="xb" style="font-size:52px; color:#e8751a; line-height:1;">BUY 1</div>
+            <div class="xb" style="font-size:52px; color:#e8751a; line-height:1;">GET 1</div>
+            <div class="xb" style="font-size:62px; color:#ff3b30; line-height:1;">FREE!</div>
+          </div>
+          <div class="abs" id="s4-dolu2" style="left:60px; top:880px; width:470px; height:900px;"></div>
+        </div>
+      </section>
+
+      <!-- S5 Sunday queue 28.8 - 32.0 -->
+      <section id="s5" class="clip" data-start="28.8" data-duration="3.2" data-track-index="1">
+        <div class="cam" id="s5-cam">
+          <div class="fill" id="s5-street"></div>
+          <svg class="fill" id="s5-crowd" viewBox="0 0 1080 1920" preserveAspectRatio="xMidYMid slice"></svg>
+          <svg class="fill" id="s5-x2" viewBox="0 0 1080 1920" preserveAspectRatio="xMidYMid slice"></svg>
+          <div class="abs" id="s5-dolu" style="left:-30px; top:960px; width:420px; height:800px;"></div>
+          <div class="fill" id="s5-plates"></div>
+        </div>
+        <div class="abs" id="s5-cal" style="left:50px; top:120px; width:260px; height:250px; border-radius:26px; background:#fff; box-shadow:0 16px 40px rgba(0,0,0,0.4); overflow:hidden; transform-origin:50% 0;">
+          <div style="height:70px; background:#ff3b30;"></div>
+          <div class="xb" style="font-size:52px; color:#3b1f0e; text-align:center; margin-top:44px;">SUNDAY</div>
+        </div>
+        <div class="counter" id="s5-counter">
+          <svg viewBox="0 0 24 24" fill="#FFD34D"><circle cx="8" cy="7" r="4"/><circle cx="17" cy="8" r="3"/><path d="M1 21c0-4 3-7 7-7s7 3 7 7z"/><path d="M15 21c0-2-.6-4-1.8-5.4 1-.4 2-.6 3-.6 3.3 0 6 2.4 6 6z"/></svg>
+          <span class="num" id="s5-num">0</span>
+        </div>
+      </section>
+
+      <!-- S6 Bolu smirk + Full loss 32.0 - 37.4 -->
+      <section id="s6" class="clip" data-start="32" data-duration="5.4" data-track-index="1">
+        <div class="fill" id="s6-wide">
+          <div class="cam" id="s6-wcam">
+            <div class="fill" id="s6-street"></div>
+            <div class="abs" id="s6-bolu" style="left:590px; top:820px; width:440px; height:900px;"></div>
+          </div>
+        </div>
+        <div class="fill" id="s6-loss" style="background:linear-gradient(180deg,#5a3a6a,#2b1d3a);">
+          <div class="cam" id="s6-lcam">
+            <svg class="fill" viewBox="0 0 1080 1920"><rect y="1400" width="1080" height="520" fill="#4a2c18"/><rect y="1400" width="1080" height="24" fill="#6b4024"/></svg>
+            <svg class="fill" id="s6-handis" viewBox="0 0 1080 1920"></svg>
+            <div class="abs" id="s6-dolu" style="left:60px; top:560px; width:600px; height:1140px;"></div>
+            <div class="abs" id="s6-calc" style="left:560px; top:820px; width:440px; height:620px; border-radius:40px; background:#2a2a2e; border:8px solid #444; padding:30px;">
+              <div style="height:150px; border-radius:20px; background:#c8d6b0; display:flex; align-items:center; justify-content:flex-end; padding:0 26px;"><span id="s6-num" class="xb" style="font-size:72px; color:#1b1b1b;">0</span></div>
+              <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-top:26px;">
+                <i style="height:80px;border-radius:16px;background:#555;display:block"></i><i style="height:80px;border-radius:16px;background:#555;display:block"></i><i style="height:80px;border-radius:16px;background:#555;display:block"></i><i style="height:80px;border-radius:16px;background:#ff9933;display:block"></i>
+                <i style="height:80px;border-radius:16px;background:#555;display:block"></i><i style="height:80px;border-radius:16px;background:#555;display:block"></i><i style="height:80px;border-radius:16px;background:#555;display:block"></i><i style="height:80px;border-radius:16px;background:#ff9933;display:block"></i>
+                <i style="height:80px;border-radius:16px;background:#555;display:block"></i><i style="height:80px;border-radius:16px;background:#555;display:block"></i><i style="height:80px;border-radius:16px;background:#555;display:block"></i><i style="height:80px;border-radius:16px;background:#ff9933;display:block"></i>
+              </div>
+            </div>
+          </div>
+          <svg class="abs" id="s6-graph" viewBox="0 0 1080 600" style="left:0; top:160px; width:1080px; height:600px; overflow:visible;">
+            <path id="s6-line" d="M80 120 L260 170 L400 140 L540 260 L640 230 L760 420 L880 560 L960 760" fill="none" stroke="#ff3b30" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+            <path id="s6-arrow" d="M920 700 L990 800 L1010 680 Z" fill="#ff3b30"/>
+          </svg>
+          <div class="stamp" id="s6-stamp" style="left:150px; top:420px; font-size:150px; transform-origin:50% 50%;">FULL LOSS</div>
+        </div>
+      </section>
+
+      <!-- S7 What is an LLM 37.4 - 48.6 -->
+      <section id="s7" class="clip tech-bg" data-start="37.4" data-duration="11.2" data-track-index="1">
+        <div class="fill grid-bg" style="opacity:0.7"></div>
+        <div class="fill" id="s7-dive" style="background:radial-gradient(circle at 50% 50%, #3b6ef5 0%, #120a35 60%);"></div>
+        <div class="abs xb stroke" id="s7-thappu" style="left:0; right:0; top:420px; text-align:center; font-size:132px; line-height:1.05;">THAPPU<div style="color:#ffd34d;">AI-ODA ILLA</div></div>
+        <div class="abs" id="s7-llm" style="left:0; right:0; top:230px; text-align:center;">
+          <div class="xb" id="s7-llm-big" style="font-size:300px; line-height:1; color:#fff; text-shadow:0 0 40px #2d7bff, 0 0 90px #8b5cf6, 0 16px 0 #1a1060;">LLM</div>
+          <div id="s7-words" style="display:flex; justify-content:center; gap:26px; font-family:PoppinsXB; font-size:66px; color:#9fd8ff;"><span>Large</span><span>Language</span><span>Model</span></div>
+        </div>
+        <svg class="abs" id="s7-brain" viewBox="-300 -260 600 520" style="left:190px; top:640px; width:700px; height:610px; overflow:visible;"></svg>
+        <div class="fill" id="s7-pages"></div>
+        <div class="abs" id="s7-count" style="left:0; right:0; top:1600px; text-align:center;">
+          <div class="xb" style="font-size:96px; color:#fff;"><span id="s7-num">0</span>+</div>
+          <div style="font-family:PoppinsSB; font-size:40px; color:#9fd8ff; letter-spacing:6px;">PAGES READ</div>
+        </div>
+      </section>
+
+      <!-- S8 Next word prediction 48.6 - 58.4 -->
+      <section id="s8" class="clip tech-bg" data-start="48.6" data-duration="9.8" data-track-index="1">
+        <div class="fill grid-bg" style="opacity:0.6"></div>
+        <div class="abs" id="s8-think" style="left:340px; top:330px; width:400px; height:400px;">
+          <svg viewBox="0 0 200 200" width="400" height="400"><circle cx="100" cy="100" r="86" fill="rgba(45,123,255,0.15)" stroke="#9fd8ff" stroke-width="6"/><text x="100" y="128" text-anchor="middle" font-size="90">🤔</text><path d="M30 30 L170 170" stroke="#ff3b30" stroke-width="16" stroke-linecap="round"/></svg>
+        </div>
+        <div class="abs" id="s8-sent" style="left:0; right:0; top:300px; text-align:center; font-family:PoppinsXB; font-size:96px;">
+          <span>Buy 1 Get </span><span id="s8-blank" style="display:inline-block; min-width:300px; border-bottom:10px solid #00d4ff; color:#ffd34d;"><span id="s8-fillword" style="display:inline-block;">1 Free</span></span>
+        </div>
+        <div class="abs" id="s8-opts" style="left:60px; right:60px; top:560px; display:flex; flex-direction:column; gap:36px;">
+          <div class="optrow" id="s8-o1"><span class="lbl" style="color:#ffd34d;">1 Free</span><span class="bar" id="s8-b1" style="width:480px; box-shadow:0 0 40px #00d4ff;"></span><span class="pct">87%</span></div>
+          <div class="optrow" id="s8-o2"><span class="lbl">Discount</span><span class="bar" id="s8-b2" style="width:180px;"></span><span class="pct">9%</span></div>
+          <div class="optrow" id="s8-o3"><span class="lbl">Later</span><span class="bar" id="s8-b3" style="width:60px;"></span><span class="pct">4%</span></div>
+        </div>
+        <div class="abs" id="s8-kb" style="left:90px; right:90px; top:940px; height:150px; border-radius:30px; background:#20243a; border:4px solid #3a4266; display:flex; align-items:center; justify-content:space-around; font-family:PoppinsSB; font-size:46px; color:#e8ecff; transform-origin:50% 50%;">
+          <span>Free</span><span style="width:3px; height:70px; background:#3a4266;"></span><span style="color:#ffd34d;">Offer</span><span style="width:3px; height:70px; background:#3a4266;"></span><span>Today</span>
+        </div>
+        <div class="abs" id="s8-aura" style="left:40px; right:40px; top:880px; height:270px; border-radius:60px; box-shadow:0 0 80px 30px rgba(0,212,255,0.6), inset 0 0 60px rgba(139,92,246,0.8); border:6px solid #9fd8ff;"></div>
+        <div class="abs xb" id="s8-power" style="left:0; right:0; top:330px; text-align:center; font-size:120px; color:#ffd34d; text-shadow:0 0 40px #ff9933;">SUPER POWER ⚡</div>
+        <div class="abs xb" id="s8-1000" style="left:0; right:0; top:1150px; text-align:center; font-size:90px; color:#9fd8ff;">1000x better</div>
+      </section>
+
+      <!-- S9 It didn't know the margin 58.4 - 70.6 -->
+      <section id="s9" class="clip" data-start="58.4" data-duration="12.2" data-track-index="1">
+        <div class="fill" id="s9-street"></div>
+        <div class="abs" id="s9-dolu" style="left:220px; top:640px; width:640px; height:1220px;"></div>
+        <div class="abs" id="s9-q" style="left:690px; top:440px; width:260px; height:260px; border-radius:50%; background:#fff; display:grid; place-items:center; font-family:PoppinsXB; font-size:190px; color:#2d7bff; box-shadow:0 20px 50px rgba(0,0,0,0.4);">?</div>
+        <div class="fill" id="s9-split">
+          <div class="abs tech-bg" style="left:0; top:0; width:540px; height:1920px;">
+            <svg class="abs" id="s9-brain" viewBox="-300 -260 600 520" style="left:30px; top:560px; width:480px; height:420px; overflow:visible;"></svg>
+            <div class="abs xb" id="s9-bq" style="left:0; right:0; top:300px; text-align:center; font-size:260px; color:#00d4ff; text-shadow:0 0 50px #2d7bff;">?</div>
+          </div>
+          <div class="abs" style="left:540px; top:0; width:540px; height:1920px; background:linear-gradient(180deg,#2a1608,#120804);">
+            <div class="abs" id="s9-card" style="left:40px; right:40px; top:380px; padding:40px 36px; border-radius:36px; background:#fff7e8; color:#3b1f0e; box-shadow:0 20px 60px rgba(0,0,0,0.5);">
+              <div class="xb" style="font-size:38px; color:#e8751a; margin-bottom:16px;">COST BREAKDOWN</div>
+              <div style="font-family:PoppinsSB; font-size:40px; line-height:1.6;">Rice<br />+ Chicken<br />+ Gas<br />+ Staff</div>
+              <div class="xb" style="font-size:56px; margin-top:12px;">= ₹<span id="s9-blank" style="display:inline-block; width:180px; height:60px; vertical-align:middle; border-radius:12px; background:#ffd34d;"></span></div>
+              <div style="font-family:PoppinsB; font-size:30px; margin-top:20px; color:#8a5530;">Profit margin: <b style="color:#ff3b30;">???</b></div>
+            </div>
+            <div class="abs xb" id="s9-warn" style="left:60px; right:60px; top:1060px; padding:26px; text-align:center; border-radius:24px; background:#ffd34d; color:#3b1f0e; font-size:52px;">⚠ MISSING INFO</div>
+          </div>
+        </div>
+        <div class="abs" id="s9-guess" style="left:640px; top:380px; width:300px; height:390px; background:#fff8e6; border:8px solid #ff9933; border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; box-shadow:0 20px 40px rgba(0,0,0,0.5);">
+          <div class="xb" style="font-size:60px; color:#e8751a; line-height:1;">BUY 1</div>
+          <div class="xb" style="font-size:60px; color:#e8751a; line-height:1;">GET 1</div>
+          <div class="xb" style="font-size:70px; color:#ff3b30; line-height:1;">FREE!</div>
+          <div class="stamp" style="position:absolute; left:-30px; top:150px; font-size:56px; border-width:8px; padding:0 20px; transform:rotate(-14deg); background:rgba(255,255,255,0.85);">AI GUESS</div>
+        </div>
+      </section>
+
+      <!-- S10 Context is everything 70.6 - 81.9 -->
+      <section id="s10" class="clip" data-start="70.6" data-duration="11.3" data-track-index="1" style="background:linear-gradient(160deg,#e8751a 0%,#5a2a6a 55%,#1a2a8a 100%);">
+        <div class="abs xb" id="s10-ctx" style="left:0; right:0; top:180px; text-align:center; font-size:170px; line-height:1; color:#fff; text-shadow:0 14px 0 #3b1f0e, 0 0 60px rgba(255,211,77,0.6); overflow:hidden;">CONTEXT<span id="s10-sweep" style="position:absolute; top:0; left:0; width:180px; height:100%; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.8),transparent); display:block;"></span></div>
+        <div class="abs" id="s10-box" style="left:120px; right:120px; top:820px; height:200px; border-radius:40px; background:rgba(10,8,30,0.8); border:5px solid #9fd8ff; display:flex; align-items:center; padding:0 40px; gap:24px; font-family:PoppinsSB; font-size:40px; color:#9aa6ff;">
+          <span style="flex:1;">Ask anything…</span>
+          <svg width="90" height="90" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#2d7bff"/><path d="M8 12h8M13 8l4 4-4 4" stroke="#fff" stroke-width="2.2" fill="none"/></svg>
+        </div>
+        <div class="card" id="s10-c1" style="left:60px; top:480px;"><div class="ic">👤</div>Yaaru neenga?</div>
+        <div class="card" id="s10-c2" style="left:390px; top:480px;"><div class="ic">₹</div>Budget enna?</div>
+        <div class="card" id="s10-c3" style="left:720px; top:480px;"><div class="ic">🎯</div>Goal enna?</div>
+        <svg class="abs" id="s10-brain" viewBox="-300 -260 600 520" style="left:390px; top:1060px; width:300px; height:260px; overflow:visible;"></svg>
+        <div class="abs" id="s10-cmp" style="left:80px; right:80px; top:1620px; display:flex; flex-direction:column; gap:20px;">
+          <div id="s10-v" style="padding:22px 30px; border-radius:24px; background:rgba(0,0,0,0.35); font-family:PoppinsB; font-size:44px; color:#aaa; text-align:center;">Vague prompt = Vague answer</div>
+          <div id="s10-cl" style="padding:22px 30px; border-radius:24px; background:rgba(0,0,0,0.35); font-family:PoppinsXB; font-size:46px; color:#ffd34d; text-align:center; border:4px solid #ff9933;">Clear context = Clear answer</div>
+        </div>
+      </section>
+
+      <!-- S11 Cliffhanger 81.9 - 86.9 -->
+      <section id="s11" class="clip" data-start="81.9" data-duration="5" data-track-index="1" style="background:radial-gradient(circle at 50% 40%, #f2b56b, #6b3a1e);">
+        <div class="abs" id="s11-dolu" style="left:-40px; top:700px; width:600px; height:1140px;"></div>
+        <div class="abs" id="s11-scrollwrap" style="left:560px; top:120px; width:470px; height:1300px; overflow:hidden; border-radius:40px; background:#151a2e; border:12px solid #2a2a33;">
+          <div id="s11-scroll" style="padding:30px; font-family:PoppinsM; font-size:28px; line-height:1.5; color:#cfd6ff;"></div>
+        </div>
+        <div class="fill" id="s11-pile"></div>
+        <div class="abs" id="s11-q" style="left:300px; top:470px; width:200px; height:200px; border-radius:50%; background:#fff; display:grid; place-items:center; font-family:PoppinsXB; font-size:150px; color:#e8751a;">?</div>
+        <div class="fill" id="s11-tease" style="background:linear-gradient(180deg,#0b0716,#1a0f30);">
+          <div class="abs" id="s11-sil" style="left:340px; top:140px; width:400px; height:760px; filter:brightness(0) blur(10px); opacity:0.85;"></div>
+          <div class="abs" id="s11-smoke" style="left:120px; top:200px; width:840px; height:1100px; background:radial-gradient(circle, rgba(200,200,220,0.35), transparent 60%); filter:blur(20px);"></div>
+          <div class="daybar" id="s11-days" style="top:1040px;">
+            <div class="d on" id="s11-d1">DAY<b>✓</b></div>
+            <div class="d" id="s11-d2" style="border-color:#ffd34d; color:#ffd34d;">DAY<b>2</b></div>
+            <div class="d">🔒</div><div class="d">🔒</div><div class="d">🔒</div>
+          </div>
+          <div class="abs chip" id="s11-tag" style="left:240px; top:880px; background:#ffd34d; color:#3b1f0e; font-size:40px;">🔒 Coming Tomorrow</div>
+        </div>
+      </section>
+
+      <!-- S12 Outro 86.9 - 92.2 (live-action creator footage) -->
+      <section id="s12" class="clip" data-start="86.9" data-duration="5.3" data-track-index="1" style="background:#120a20;"></section>
+      <video id="outro-cam" class="clip" src="assets/media/outro-cam.mp4" muted playsinline data-start="86.9" data-duration="5.3" data-media-start="0.5" data-track-index="2" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:3;"></video>
+      <section id="s12-gfx" class="clip" data-start="86.9" data-duration="5.3" data-track-index="3" style="z-index:4;">
+        <div class="fill" style="background:linear-gradient(90deg, rgba(255,153,51,0.35), transparent 30%, transparent 70%, rgba(45,123,255,0.35));"></div>
+        <div class="fill" style="background:linear-gradient(180deg, transparent 55%, rgba(0,0,0,0.65));"></div>
+        <div class="lowerthird" id="s12-lt" style="top:1640px;">
+          <div class="ico" style="background:linear-gradient(160deg,#2d7bff,#8b5cf6);"><span class="xb" style="font-size:44px;">JC</span></div>
+          <div><div class="t1">Joshua Collins</div><div class="t2" style="color:#fff;">AI Series | Day 1 of 5</div></div>
+        </div>
+        <div class="abs" id="s12-end" style="left:0; right:0; top:120px; display:flex; flex-direction:column; align-items:center; gap:26px;">
+          <div style="display:flex; gap:26px;">
+            <div class="btn" id="s12-follow" style="background:#ff9933; color:#fff;">+ Follow</div>
+            <div class="btn" id="s12-save" style="background:#fff; color:#3b1f0e;">🔖 Save</div>
+          </div>
+          <div class="chip" id="s12-badge" style="background:linear-gradient(90deg,#2d7bff,#8b5cf6); font-size:38px;">📅 Day 2 Tomorrow</div>
+        </div>
+      </section>
+
+      <!-- Captions: one track over everything -->
+      <div id="captions" class="clip" data-start="0" data-duration="92.2" data-track-index="5" style="z-index:50;"></div>
+
+      <!-- Audio -->
+      <audio id="vo" src="assets/media/vo.m4a" data-start="0" data-duration="92.2" data-track-index="10" data-volume="1"></audio>
+      <audio id="music" src="assets/media/music.m4a" data-start="0" data-duration="92.2" data-track-index="11" data-volume="0.16"></audio>
+      <audio id="sfx0" src="assets/sfx/whoosh-cinematic.mp3" data-start="0.0" data-duration="1.2" data-track-index="20" data-volume="0.7"></audio>
+      <audio id="sfx1" src="assets/sfx/impact-bass-1.mp3" data-start="2.4" data-duration="1.2" data-track-index="21" data-volume="0.9"></audio>
+      <audio id="sfx2" src="assets/sfx/glitch-1.mp3" data-start="2.4" data-duration="1.2" data-track-index="22" data-volume="0.4"></audio>
+      <audio id="sfx3" src="assets/sfx/impact-bass-2.mp3" data-start="6.3" data-duration="1.2" data-track-index="23" data-volume="0.8"></audio>
+      <audio id="sfx4" src="assets/sfx/error.mp3" data-start="6.4" data-duration="1.2" data-track-index="20" data-volume="0.35"></audio>
+      <audio id="sfx5" src="assets/sfx/glitch-2.mp3" data-start="8.2" data-duration="1.2" data-track-index="21" data-volume="0.5"></audio>
+      <audio id="sfx6" src="assets/sfx/click.mp3" data-start="9.1" data-duration="1.2" data-track-index="22" data-volume="0.6"></audio>
+      <audio id="sfx7" src="assets/sfx/chime.mp3" data-start="10.3" data-duration="1.2" data-track-index="23" data-volume="0.5"></audio>
+      <audio id="sfx8" src="assets/sfx/whoosh.mp3" data-start="11.0" data-duration="1.2" data-track-index="20" data-volume="0.5"></audio>
+      <audio id="sfx9" src="assets/sfx/whoosh-short.mp3" data-start="13.95" data-duration="1.2" data-track-index="21" data-volume="0.5"></audio>
+      <audio id="sfx10" src="assets/sfx/typing.mp3" data-start="14.4" data-duration="2.2" data-track-index="22" data-volume="0.5"></audio>
+      <audio id="sfx11" src="assets/sfx/whoosh-short.mp3" data-start="16.8" data-duration="1.2" data-track-index="23" data-volume="0.6"></audio>
+      <audio id="sfx12" src="assets/sfx/ping.mp3" data-start="19.5" data-duration="1.2" data-track-index="20" data-volume="0.5"></audio>
+      <audio id="sfx13" src="assets/sfx/sparkle.mp3" data-start="19.7" data-duration="1.2" data-track-index="21" data-volume="0.6"></audio>
+      <audio id="sfx14" src="assets/sfx/impact-bass-1.mp3" data-start="21.4" data-duration="1.2" data-track-index="22" data-volume="0.8"></audio>
+      <audio id="sfx15" src="assets/sfx/sparkle.mp3" data-start="21.5" data-duration="1.2" data-track-index="23" data-volume="0.5"></audio>
+      <audio id="sfx16" src="assets/sfx/whoosh.mp3" data-start="23.6" data-duration="1.2" data-track-index="20" data-volume="0.5"></audio>
+      <audio id="sfx17" src="assets/sfx/notification.mp3" data-start="26.1" data-duration="1.2" data-track-index="21" data-volume="0.4"></audio>
+      <audio id="sfx18" src="assets/sfx/pop.mp3" data-start="27.3" data-duration="1.2" data-track-index="22" data-volume="0.6"></audio>
+      <audio id="sfx19" src="assets/sfx/whoosh-cinematic.mp3" data-start="28.8" data-duration="1.2" data-track-index="23" data-volume="0.5"></audio>
+      <audio id="sfx20" src="assets/sfx/click.mp3" data-start="28.9" data-duration="1.2" data-track-index="20" data-volume="0.5"></audio>
+      <audio id="sfx21" src="assets/sfx/pop.mp3" data-start="29.8" data-duration="1.2" data-track-index="21" data-volume="0.4"></audio>
+      <audio id="sfx22" src="assets/sfx/pop.mp3" data-start="30.3" data-duration="1.2" data-track-index="22" data-volume="0.4"></audio>
+      <audio id="sfx23" src="assets/sfx/pop.mp3" data-start="30.8" data-duration="1.2" data-track-index="23" data-volume="0.4"></audio>
+      <audio id="sfx24" src="assets/sfx/whoosh-short.mp3" data-start="32.0" data-duration="1.2" data-track-index="20" data-volume="0.5"></audio>
+      <audio id="sfx25" src="assets/sfx/key-press.mp3" data-start="34.8" data-duration="1.2" data-track-index="21" data-volume="0.6"></audio>
+      <audio id="sfx26" src="assets/sfx/key-press.mp3" data-start="35.1" data-duration="1.2" data-track-index="22" data-volume="0.6"></audio>
+      <audio id="sfx27" src="assets/sfx/key-press.mp3" data-start="35.4" data-duration="1.2" data-track-index="23" data-volume="0.6"></audio>
+      <audio id="sfx28" src="assets/sfx/impact-bass-2.mp3" data-start="35.8" data-duration="1.2" data-track-index="20" data-volume="0.9"></audio>
+      <audio id="sfx29" src="assets/sfx/whoosh-cinematic.mp3" data-start="37.4" data-duration="1.2" data-track-index="21" data-volume="0.7"></audio>
+      <audio id="sfx30" src="assets/sfx/impact-bass-1.mp3" data-start="37.6" data-duration="1.2" data-track-index="22" data-volume="0.7"></audio>
+      <audio id="sfx31" src="assets/sfx/riser.mp3" data-start="39.2" data-duration="1.8" data-track-index="23" data-volume="0.4"></audio>
+      <audio id="sfx32" src="assets/sfx/impact-bass-2.mp3" data-start="40.9" data-duration="1.2" data-track-index="20" data-volume="0.8"></audio>
+      <audio id="sfx33" src="assets/sfx/whoosh.mp3" data-start="44.0" data-duration="1.2" data-track-index="21" data-volume="0.5"></audio>
+      <audio id="sfx34" src="assets/sfx/chime.mp3" data-start="46.7" data-duration="1.2" data-track-index="22" data-volume="0.4"></audio>
+      <audio id="sfx35" src="assets/sfx/error.mp3" data-start="48.9" data-duration="1.2" data-track-index="23" data-volume="0.4"></audio>
+      <audio id="sfx36" src="assets/sfx/pop.mp3" data-start="51.6" data-duration="1.2" data-track-index="20" data-volume="0.4"></audio>
+      <audio id="sfx37" src="assets/sfx/pop.mp3" data-start="51.8" data-duration="1.2" data-track-index="21" data-volume="0.4"></audio>
+      <audio id="sfx38" src="assets/sfx/pop.mp3" data-start="52.0" data-duration="1.2" data-track-index="22" data-volume="0.4"></audio>
+      <audio id="sfx39" src="assets/sfx/click.mp3" data-start="52.8" data-duration="1.2" data-track-index="23" data-volume="0.6"></audio>
+      <audio id="sfx40" src="assets/sfx/riser.mp3" data-start="55.3" data-duration="1.8" data-track-index="20" data-volume="0.4"></audio>
+      <audio id="sfx41" src="assets/sfx/impact-bass-1.mp3" data-start="56.3" data-duration="1.2" data-track-index="21" data-volume="0.7"></audio>
+      <audio id="sfx42" src="assets/sfx/whoosh.mp3" data-start="58.4" data-duration="1.2" data-track-index="22" data-volume="0.5"></audio>
+      <audio id="sfx43" src="assets/sfx/notification.mp3" data-start="60.5" data-duration="1.2" data-track-index="23" data-volume="0.4"></audio>
+      <audio id="sfx44" src="assets/sfx/error.mp3" data-start="64.0" data-duration="1.2" data-track-index="20" data-volume="0.4"></audio>
+      <audio id="sfx45" src="assets/sfx/click-soft.mp3" data-start="66.8" data-duration="1.2" data-track-index="21" data-volume="0.7"></audio>
+      <audio id="sfx46" src="assets/sfx/pop.mp3" data-start="68.4" data-duration="1.2" data-track-index="22" data-volume="0.5"></audio>
+      <audio id="sfx47" src="assets/sfx/whoosh.mp3" data-start="70.6" data-duration="1.2" data-track-index="23" data-volume="0.5"></audio>
+      <audio id="sfx48" src="assets/sfx/impact-bass-1.mp3" data-start="72.2" data-duration="1.2" data-track-index="20" data-volume="0.7"></audio>
+      <audio id="sfx49" src="assets/sfx/whoosh-short.mp3" data-start="76.3" data-duration="1.2" data-track-index="21" data-volume="0.5"></audio>
+      <audio id="sfx50" src="assets/sfx/click.mp3" data-start="76.7" data-duration="1.2" data-track-index="22" data-volume="0.6"></audio>
+      <audio id="sfx51" src="assets/sfx/whoosh-short.mp3" data-start="77.5" data-duration="1.2" data-track-index="23" data-volume="0.5"></audio>
+      <audio id="sfx52" src="assets/sfx/click.mp3" data-start="77.9" data-duration="1.2" data-track-index="20" data-volume="0.6"></audio>
+      <audio id="sfx53" src="assets/sfx/whoosh-short.mp3" data-start="78.7" data-duration="1.2" data-track-index="21" data-volume="0.5"></audio>
+      <audio id="sfx54" src="assets/sfx/click.mp3" data-start="79.1" data-duration="1.2" data-track-index="22" data-volume="0.6"></audio>
+      <audio id="sfx55" src="assets/sfx/chime.mp3" data-start="80.1" data-duration="1.2" data-track-index="23" data-volume="0.6"></audio>
+      <audio id="sfx56" src="assets/sfx/typing.mp3" data-start="82.0" data-duration="2.2" data-track-index="20" data-volume="0.5"></audio>
+      <audio id="sfx57" src="assets/sfx/glitch-1.mp3" data-start="84.8" data-duration="1.2" data-track-index="21" data-volume="0.4"></audio>
+      <audio id="sfx58" src="assets/sfx/riser.mp3" data-start="84.9" data-duration="1.8" data-track-index="22" data-volume="0.4"></audio>
+      <audio id="sfx59" src="assets/sfx/impact-bass-2.mp3" data-start="86.0" data-duration="1.2" data-track-index="23" data-volume="0.8"></audio>
+      <audio id="sfx60" src="assets/sfx/whoosh-cinematic.mp3" data-start="86.9" data-duration="1.2" data-track-index="20" data-volume="0.5"></audio>
+      <audio id="sfx61" src="assets/sfx/ping.mp3" data-start="90.7" data-duration="1.2" data-track-index="21" data-volume="0.5"></audio>
+      <audio id="sfx62" src="assets/sfx/impact-bass-1.mp3" data-start="91.1" data-duration="1.1" data-track-index="22" data-volume="0.6"></audio>
+    </div>
+
+    <script>
+      (function () {
+        const A = window.ART;
+        const $ = (s) => document.querySelector(s);
+        const put = (sel, html) => { $(sel).innerHTML = html; };
+
+        // ---------- stamp art ----------
+        put("#s1-street", A.street({ mood: "golden", id: "st1" }));
+        put("#s1-crowd", A.crowd({ seed: 21, count: 90 }));
+        put("#s1-handi", A.handi(330, 1480, 1.0, "s1-pot") + A.steam(330, 1450, 1.0, "steam s1-steam"));
+        put("#s1-dolu", A.dolu({ id: "d1", expr: "panic", ladle: true }));
+        put("#s2-freeze", A.street({ mood: "golden", id: "st2" }));
+        put("#s3-street", A.street({ mood: "morning", id: "st3" }));
+        put("#s3-handi", A.handi(330, 1480, 1.0) + A.steam(330, 1450, 1.0, "steam s3-steam"));
+        put("#s3-macro-svg", A.handi(540, 1000, 3.6) + A.steam(540, 900, 3.0, "steam s3-msteam") +
+          `<g id="s3-spoon" transform="translate(540 960)"><rect x="-14" y="-620" width="28" height="600" rx="14" fill="#C9C9C9"/><ellipse cx="0" cy="-10" rx="90" ry="40" fill="#B8B8B8"/></g>`);
+        put("#s3-dolu", A.dolu({ id: "d3", expr: "focus", glasses: true }));
+        put("#s4-dolu", A.dolu({ id: "d4", expr: "grin" }));
+        put("#s4-street", A.street({ mood: "morning", id: "st4" }));
+        put("#s4-dolu2", A.dolu({ id: "d42", expr: "happy" }));
+        put("#s5-street", A.street({ mood: "golden", id: "st5" }));
+        put("#s5-crowd", A.crowd({ seed: 55, count: 110, idPrefix: "s5p" }));
+        put("#s5-dolu", A.dolu({ id: "d5", expr: "happy", sweat: true }));
+        put("#s6-street", A.street({ mood: "evening", id: "st6" }));
+        put("#s6-bolu", A.bolu({ id: "b6" }));
+        put("#s6-handis", A.handi(200, 1330, 0.9) + A.handi(900, 1330, 0.8));
+        put("#s6-dolu", A.dolu({ id: "d6", expr: "shock", sweat: true }));
+        put("#s9-street", A.street({ mood: "night", id: "st9" }));
+        put("#s9-dolu", A.dolu({ id: "d9", expr: "confused" }));
+        put("#s11-dolu", A.dolu({ id: "d11", expr: "tired" }));
+        put("#s11-sil", A.dolu({ id: "d11s", expr: "panic" }));
+
+        // Second Dolu face states for in-scene expression swaps
+                $("#s6-dolu").insertAdjacentHTML("beforeend", `<div class="fill" id="s6-dolu-happy">${A.dolu({ id: "d6h", expr: "happy" })}</div>`);
+        $("#s9-dolu").insertAdjacentHTML("beforeend", `<div class="fill" id="s9-dolu-shock">${A.dolu({ id: "d9s", expr: "shock" })}</div>`);
+        document.querySelectorAll(".char").forEach((c) => { c.style.width = "100%"; c.style.height = "100%"; });
+
+        // Neural-network brain (seeded so every frame matches)
+        function brain(sel, seed, color) {
+          const r = A.rng(seed);
+          const nodes = [];
+          for (let i = 0; i < 46; i++) {
+            const a = r() * Math.PI * 2, d = Math.sqrt(r());
+            nodes.push([Math.cos(a) * d * 260, Math.sin(a) * d * 200 - 10]);
+          }
+          let links = "", dots = "";
+          nodes.forEach((p, i) => {
+            nodes.forEach((q, j) => {
+              if (j > i && Math.hypot(p[0] - q[0], p[1] - q[1]) < 95) links += `<line x1="${p[0].toFixed(1)}" y1="${p[1].toFixed(1)}" x2="${q[0].toFixed(1)}" y2="${q[1].toFixed(1)}"/>`;
+            });
+            dots += `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="${(6 + r() * 7).toFixed(1)}"/>`;
+          });
+          $(sel).innerHTML = `<defs><radialGradient id="${sel.slice(1)}-g"><stop offset="0" stop-color="${color}" stop-opacity="0.55"/><stop offset="1" stop-color="${color}" stop-opacity="0"/></radialGradient></defs>
+            <ellipse class="glow" cx="0" cy="0" rx="300" ry="250" fill="url(#${sel.slice(1)}-g)"/>
+            <path d="M-20 -230 Q-280 -240 -280 -20 Q-290 180 -40 220 Q-10 140 -20 -230 Z M20 -230 Q280 -240 280 -20 Q290 180 40 220 Q10 140 20 -230 Z" fill="none" stroke="${color}" stroke-width="6" opacity="0.6"/>
+            <g class="links" stroke="${color}" stroke-width="3" opacity="0.55">${links}</g><g class="nodes" fill="#fff">${dots}</g>`;
+        }
+        brain("#s7-brain", 3, "#00d4ff");
+        brain("#s9-brain", 3, "#00d4ff");
+        brain("#s10-brain", 3, "#00d4ff");
+
+        // Burst rays + confetti for the B1G1 explosion
+        let rays = "";
+        for (let i = 0; i < 18; i++) rays += `<path d="M0 0 L${(Math.cos((i / 18) * 6.283 - 0.08) * 1600).toFixed(0)} ${(Math.sin((i / 18) * 6.283 - 0.08) * 1600).toFixed(0)} L${(Math.cos((i / 18) * 6.283 + 0.08) * 1600).toFixed(0)} ${(Math.sin((i / 18) * 6.283 + 0.08) * 1600).toFixed(0)} Z"/>`;
+        $("#s4-rays").innerHTML = rays;
+        const cr = A.rng(99), ccol = ["#fff", "#ffd34d", "#ff3b30", "#2e7d32", "#3f7cac", "#ff9933"];
+        let conf = "";
+        for (let i = 0; i < 70; i++) conf += `<i style="left:${(cr() * 1040).toFixed(0)}px; top:${(-80 - cr() * 400).toFixed(0)}px; background:${ccol[i % 6]};"></i>`;
+        $("#s4-confetti").innerHTML = conf;
+
+        // Flying pages for the LLM vortex
+        const pr = A.rng(7);
+        let pages = "";
+        for (let i = 0; i < 40; i++) pages += `<div class="pg" style="position:absolute; left:${(pr() * 1000).toFixed(0)}px; top:${(pr() * 1800).toFixed(0)}px; width:90px; height:120px; background:#f4f0ff; border-radius:6px; box-shadow:0 6px 18px rgba(0,0,0,0.4); background-image:repeating-linear-gradient(180deg, transparent 0 16px, #b8b2d8 16px 20px); background-size:70px 100%; background-position:10px 14px; background-repeat:no-repeat;"></div>`;
+        $("#s7-pages").innerHTML = pages;
+
+        // x2 bubbles over the Sunday crowd
+        const xr = A.rng(31);
+        let x2 = "";
+        for (let i = 0; i < 16; i++) {
+          const x = 330 + xr() * 260, y = 860 + xr() * 340;
+          x2 += `<g class="x2" transform="translate(${x.toFixed(0)} ${y.toFixed(0)})"><g class="x2i"><rect x="-38" y="-30" width="76" height="52" rx="18" fill="#fff"/><text x="0" y="8" text-anchor="middle" font-family="PoppinsXB" font-size="30" fill="#e8751a">x2</text></g></g>`;
+        }
+        $("#s5-x2").innerHTML = x2;
+        let plates = "";
+        for (let i = 0; i < 6; i++) plates += `<div class="plate" style="position:absolute; left:${300 + i * 20}px; top:${1200 - i * 10}px; width:110px; height:110px; border-radius:50%; background:radial-gradient(circle,#f2b640 0 45%, #e8e8e8 46% 100%); box-shadow:0 8px 20px rgba(0,0,0,0.35);"></div>`;
+        $("#s5-plates").innerHTML = plates;
+
+        // Endless message for the cliffhanger
+        const longMsg = "Naan Dolu, biryani kadai vechirukken. Chicken biryani ₹180, mutton ₹260. Rice kilo ₹90, chicken kilo ₹220, gas cylinder ₹1100, 3 staff salary… weekend la 150 plate pogum, margin 22%, target customers college pasanga, budget ₹2000, goal profit increase panradhu, poster size A3, Tamil + English, Bolu kadai offer vida better-ah irukkanum, but loss aagakoodadhu… ";
+        $("#s11-scroll").textContent = longMsg.repeat(6);
+        let pile = "";
+        for (let i = 0; i < 9; i++) pile += `<div class="sheet" style="position:absolute; left:${560 + (i % 3) * 120}px; top:${1500 + Math.floor(i / 3) * 60}px; width:200px; height:140px; background:#fff; border-radius:8px; transform:rotate(${(i * 37) % 30 - 15}deg); box-shadow:0 6px 16px rgba(0,0,0,0.3); background-image:repeating-linear-gradient(180deg, transparent 0 18px, #c9c9d8 18px 22px);"></div>`;
+        $("#s11-pile").innerHTML = pile;
+
+        // ---------- captions ----------
+        // *word* = saffron highlight, !word! = red. fx: pop | big | shake | stamp | glow
+        const CAPS = [
+          [0.15, 1.3, "ChatGPT eludhuna"], [1.3, 2.4, "*ORU* *LINE*", "big"], [2.4, 3.6, "!200! !PERU!", "shake"], [3.6, 5.1, "veliya nikkuraanga..."],
+          [5.15, 6.3, "Aana *PROFIT*"], [6.3, 7.9, "!₹0!", "stamp"],
+          [8.3, 9.4, "AI kathukalam"], [9.4, 10.95, "*DAY* *1*", "glow"],
+          [11.2, 12.4, "*Dolu* *Anna*"], [12.4, 13.95, "biryani kadai vechirukkaaru", "small"], [14.2, 15.4, "weekend offer poster"], [15.4, 17.0, "oru *CATCHY* offer ezhudhi kudu", "small"],
+          [19.5, 21.2, "Stylish-ah ezhudhuchu"], [21.4, 23.6, "*BUY* *1* *GET* *1* !FREE!", "big"], [26.2, 27.5, "happy-ah print panni"], [27.5, 28.75, "*ottinaaru*"],
+          [28.85, 29.6, "*SUNDAY*", "big"], [29.6, 30.6, "!200! !PERU!", "shake"], [30.6, 31.95, "*QUEUE-LA!*", "big"],
+          [32.1, 33.2, "Edhirla Bolu Anna..."], [33.2, 34.5, "sirichitu irundhaan 😏"], [34.7, 35.8, "Evening kanakku paathaa..."], [35.8, 37.35, "!FULL! !LOSS!", "stamp"],
+          [37.5, 40.0, "Thappu AI-oda *ILLA*"], [40.9, 42.3, "*LLM*", "big"], [42.3, 45.6, "Large Language Model"], [45.8, 46.7, "Lakhs of pages padicha"], [46.7, 48.5, "*ORU* *BRAIN* 🧠", "glow"],
+          [48.8, 50.75, "Adhu *YOSIKALA*"], [51.2, 51.75, "adutha best *WORD*"], [51.75, 53.6, "*PREDICT* pannudhu"], [53.9, 56.1, "Keyboard suggestion"], [56.3, 58.35, "*SUPER* *POWERFUL* version ⚡"],
+          [58.45, 60.7, "Dolu Anna kadai pathi"], [61.2, 62.6, "*PROFIT* *MARGIN* enna nu"], [62.6, 64.9, "adhuku eppadi theriyum?"], [64.95, 66.6, "Avar *SOLLAVE* *ILLAYE* 🤦"], [66.7, 68.4, "Direct-ah *PREDICT* panni"], [68.4, 70.5, "poster ready!"],
+          [70.8, 72.0, "Adhanaala dhaan..."], [72.2, 73.5, "*CONTEXT* dhaan", "big"], [73.5, 76.2, "answer-a *DECIDE* pannum"], [76.3, 77.5, "Yaaru neenga?"], [77.5, 78.7, "Budget enna?"], [78.7, 80.1, "Goal enna?"], [80.1, 81.8, "*ELLAM* *SOLLUNGA* ✅", "glow"],
+          [82.1, 83.0, "Daily *IVLO* *DETAIL*"], [83.0, 84.6, "type panna mudiyuma? 🤔"], [84.8, 85.8, "Innum *PERIYA* *COMEDY* 😂"], [85.8, 86.85, "*DAY* *2-la* paakalam!"],
+          [87.0, 89.6, "This is *JOSHUA* *COLLINS*"], [89.9, 90.5, "Let's build the"], [90.5, 91.1, "*LEVERAGE*", "glow"], [91.1, 92.1, "together 🚀"],
+        ];
+        const capRoot = $("#captions");
+        CAPS.forEach((c, i) => {
+          const d = document.createElement("div");
+          d.className = "cap" + (c[3] === "big" || c[3] === "stamp" || c[3] === "shake" ? " big" : c[3] === "small" ? " small" : "");
+          d.id = "cap" + i;
+          d.innerHTML = c[2].split(" ").map((w) => {
+            let cls = "w";
+            if (/^\*.*\*$/.test(w)) { cls += " hl"; w = w.slice(1, -1); }
+            else if (/^!.*!$/.test(w)) { cls += " red"; w = w.slice(1, -1); }
+            return `<span class="${cls}">${w}</span>`;
+          }).join("");
+          capRoot.appendChild(d);
+        });
+
+        // ---------- timeline ----------
+        const tl = gsap.timeline({ paused: true });
+        const pop = (el, t, d = 0.4, from = 0.3) => tl.fromTo(el, { scale: from, opacity: 0 }, { scale: 1, opacity: 1, duration: d, ease: "back.out(2)" }, t);
+        const fadeIn = (el, t, d = 0.3) => tl.fromTo(el, { opacity: 0 }, { opacity: 1, duration: d, ease: "power1.out" }, t);
+        const fadeOut = (el, t, d = 0.25) => tl.to(el, { opacity: 0, duration: d, ease: "power1.in" }, t);
+        const shake = (el, t, amp = 18, n = 9) => {
+          tl.fromTo(el, { x: -amp }, { x: amp, duration: 0.04, repeat: n, yoyo: true, ease: "none" }, t);
+          tl.set(el, { x: 0 }, t + 0.04 * (n + 1));
+        };
+        const count = (el, from, to, t, d, fmt = (v) => Math.round(v).toString()) => {
+          const o = { v: from };
+          tl.fromTo(o, { v: from }, { v: to, duration: d, ease: "power2.out", onUpdate: () => { el.textContent = fmt(o.v); } }, t);
+        };
+        const inr = (v) => Math.round(v).toLocaleString("en-IN");
+        const steamLoop = (sel, t, dur) => {
+          const n = Math.max(1, Math.floor(dur / 1.2));
+          tl.fromTo(`${sel} path`, { y: 0, opacity: 0.8 }, { y: -50, opacity: 0, duration: 1.2, stagger: 0.25, repeat: n - 1, ease: "sine.out" }, t);
+        };
+
+        // Captions
+        CAPS.forEach((c, i) => {
+          const el = $("#cap" + i), words = el.querySelectorAll(".w");
+          const t0 = c[0], t1 = c[1], span = Math.min(0.45, (t1 - t0) * 0.45);
+          tl.set(el, { opacity: 1 }, t0);
+          tl.fromTo(words, { scale: 0.3, opacity: 0, y: 30 }, { scale: 1, opacity: 1, y: 0, duration: 0.22, ease: "back.out(2.6)", stagger: words.length > 1 ? span / words.length : 0 }, t0);
+          if (c[3] === "shake") shake(el, t0 + 0.2, 14, 7);
+          if (c[3] === "stamp") tl.fromTo(el, { scale: 2.2, rotation: -8 }, { scale: 1, rotation: -4, duration: 0.25, ease: "power4.in" }, t0);
+          if (c[3] === "glow") tl.fromTo(words, { textShadow: "0 0 0px rgba(255,211,77,0)" }, { textShadow: "0 0 40px rgba(255,211,77,1)", duration: 0.4, yoyo: true, repeat: 1 }, t0 + 0.2);
+          tl.set(el, { opacity: 0 }, t1);
+        });
+
+        // S1 hook: drone dive, crowd, cracked chat bubble, 200 counter, profit 0
+        tl.fromTo("#s1-cam", { scale: 2.1, y: 760, rotation: -5 }, { scale: 1.05, y: 0, rotation: 0, duration: 1.7, ease: "power3.out" }, 0);
+        tl.to("#s1-cam", { scale: 1.16, y: -40, duration: 3.3, ease: "sine.inOut" }, 1.7);
+        tl.fromTo("#s1-crowd .crowd-p", { y: 0 }, { y: -10, duration: 0.18, yoyo: true, repeat: 41, stagger: { each: 0.01, from: "random" }, ease: "sine.inOut" }, 0.2);
+        steamLoop("#s1-handi .s1-steam", 0, 8);
+        tl.fromTo("#d1 .d1-ladle", { rotation: -10, transformOrigin: "324px 500px" }, { rotation: 12, duration: 0.25, yoyo: true, repeat: 27, ease: "sine.inOut" }, 0.4);
+        tl.fromTo("#s1-bubble", { scale: 0.2, opacity: 0, y: 40 }, { scale: 1, opacity: 1, y: 0, duration: 0.45, ease: "back.out(2)" }, 1.0);
+        tl.fromTo("#s1-crack path", { strokeDasharray: 300, strokeDashoffset: 300 }, { strokeDashoffset: 0, duration: 0.25, stagger: 0.05 }, 2.2);
+        tl.to("#s1-bubble", { y: 300, rotation: 18, opacity: 0, duration: 0.6, ease: "power2.in" }, 2.6);
+        pop("#s1-counter", 1.3, 0.35);
+        count($("#s1-num"), 0, 200, 1.35, 1.05);
+        shake("#s1-cam", 2.4, 22, 9);
+        tl.fromTo("#s1-profit", { scale: 0.4, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.4, ease: "back.out(2)" }, 5.15);
+        shake("#s1-profit", 6.35, 16, 7);
+        tl.to("#s1-cam", { filter: "brightness(0.55)", duration: 0.4 }, 5.1);
+
+        // S2 series intro: freeze slides away, title glitch, day bar, level meter
+        tl.fromTo("#s2-freeze", { x: 0 }, { x: -1100, duration: 0.45, ease: "power3.in" }, 8.25);
+        tl.fromTo("#s2-title", { opacity: 0, x: 160, skewX: -20 }, { opacity: 1, x: 0, skewX: 0, duration: 0.4, ease: "power3.out" }, 8.5);
+        tl.fromTo("#s2-title", { textShadow: "6px 0 #00d4ff, -6px 0 #ff3b30" }, { textShadow: "0 0 40px rgba(139,92,246,0.9)", duration: 0.12, repeat: 3, yoyo: true, ease: "steps(1)" }, 8.9);
+        fadeIn("#s2-sub", 8.7);
+        tl.fromTo("#s2-days .d", { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, stagger: 0.06, ease: "back.out(2)" }, 8.75);
+        tl.set("#s2-d1", { className: "d on" }, 9.15);
+        tl.fromTo("#s2-d1", { scale: 1 }, { scale: 1.12, duration: 0.2, yoyo: true, repeat: 3 }, 9.15);
+        fadeIn("#s2-level", 9.5);
+        tl.fromTo("#s2-fill", { scaleX: 0 }, { scaleX: 1, duration: 1.0, ease: "power2.inOut" }, 9.7);
+        count($("#s2-lvl"), 0, 3, 9.7, 1.0);
+
+        // S3 morning establishing, macro b-roll, close-up typing
+        tl.fromTo("#s3-cam", { scale: 1.0 }, { scale: 1.35, x: 180, y: -60, duration: 3.0, ease: "sine.inOut" }, 11.0);
+        steamLoop("#s3-handi .s3-steam", 11.0, 2.4);
+        pop("#s3-tag", 11.3, 0.45);
+        tl.fromTo("#s3-tag", { x: 0 }, { x: -800, duration: 0.35, ease: "power2.in" }, 13.75);
+        tl.set("#s3-macro", { opacity: 0 }, 11.0);
+        tl.set("#s3-macro", { opacity: 1 }, 12.55);
+        tl.fromTo("#s3-macro-svg", { scale: 1.15 }, { scale: 1.0, duration: 1.4, ease: "none" }, 12.55);
+        tl.fromTo("#s3-spoon", { rotation: -20, svgOrigin: "540 400" }, { rotation: 20, duration: 0.45, yoyo: true, repeat: 2, ease: "sine.inOut" }, 12.55);
+        steamLoop("#s3-macro-svg .s3-msteam", 12.55, 1.4);
+        tl.set("#s3-close", { opacity: 0 }, 11.0);
+        tl.set("#s3-close", { opacity: 1 }, 13.95);
+        tl.fromTo("#s3-close", { scale: 1.08 }, { scale: 1.0, duration: 5.4, ease: "sine.out" }, 13.95);
+        tl.fromTo("#s3-phone", { y: 300, opacity: 0, rotation: 6 }, { y: 0, opacity: 1, rotation: 0, duration: 0.5, ease: "power3.out" }, 14.0);
+        const typedEl = $("#s3-typed"), MSG = "oru catchy offer ezhudhi kudu";
+        for (let i = 0; i <= MSG.length; i++) tl.call(() => { typedEl.textContent = MSG.substring(0, i); }, null, 14.45 + i * 0.075);
+        tl.call(() => { typedEl.textContent = ""; }, null, 14.0);
+        tl.fromTo("#s3-cursor", { opacity: 1 }, { opacity: 0, duration: 0.25, repeat: 11, yoyo: true, ease: "steps(1)" }, 14.2);
+        tl.fromTo("#s3-msg", { scale: 1 }, { scale: 1.06, duration: 0.12, yoyo: true, repeat: 1 }, 16.8);
+        tl.fromTo("#s3-dots", { opacity: 0 }, { opacity: 1, duration: 0.2 }, 17.0);
+        tl.fromTo("#s3-dots i", { y: 0 }, { y: -14, duration: 0.25, yoyo: true, repeat: 7, stagger: 0.12, ease: "sine.inOut" }, 17.1);
+
+        // S4 joy, B1G1 explosion, printer, poster on wall
+        tl.fromTo("#s4-close", { scale: 1.12 }, { scale: 1.0, duration: 2.0, ease: "power2.out" }, 19.4);
+        tl.fromTo("#s4-reply", { scale: 0.3, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.4, ease: "back.out(2)" }, 19.6);
+        tl.fromTo("#s4-sparkles path", { scale: 0, opacity: 0, transformOrigin: "50% 50%" }, { scale: 1.2, opacity: 1, duration: 0.3, stagger: 0.12, yoyo: true, repeat: 1 }, 19.7);
+        tl.fromTo("#d4 .d4-armR", { rotation: 0, svgOrigin: "320 360" }, { rotation: -30, duration: 0.3, yoyo: true, repeat: 3 }, 20.2);
+        tl.set("#s4-boom", { opacity: 0 }, 19.4);
+        tl.set("#s4-boom", { opacity: 1 }, 21.4);
+        tl.fromTo("#s4-b1g1", { scale: 0.05, rotation: -12 }, { scale: 1, rotation: 0, duration: 0.55, ease: "back.out(1.6)" }, 21.4);
+        tl.fromTo("#s4-b1g1 > div", { y: 0 }, { y: -24, duration: 0.3, yoyo: true, repeat: 3, stagger: 0.1, ease: "sine.inOut" }, 22.0);
+        tl.fromTo("#s4-rays", { rotation: 0, svgOrigin: "0 0" }, { rotation: 40, duration: 2.2, ease: "none" }, 21.4);
+        tl.fromTo("#s4-confetti i", { y: 0, rotation: 0 }, { y: 2300, rotation: 720, duration: 2.2, stagger: 0.01, ease: "power1.in" }, 21.45);
+        tl.to("#s4-b1g1", { scale: 0.3, y: 400, opacity: 0, duration: 0.4, ease: "power2.in" }, 23.3);
+        tl.set("#s4-print", { opacity: 0 }, 19.4);
+        tl.set("#s4-print", { opacity: 1 }, 23.65);
+        tl.fromTo("#s4-printer", { y: 0 }, { y: -6, duration: 0.06, yoyo: true, repeat: 19, ease: "none" }, 23.8);
+        tl.fromTo("#s4-paper", { clipPath: "inset(0% 0% 100% 0%)", y: -150 }, { clipPath: "inset(0% 0% 0% 0%)", y: 0, duration: 1.4, ease: "none" }, 23.9);
+        tl.to("#s4-paper", { scale: 1.08, duration: 0.3, yoyo: true, repeat: 1 }, 25.4);
+        tl.set("#s4-wall", { opacity: 0 }, 19.4);
+        tl.set("#s4-wall", { opacity: 1 }, 26.1);
+        tl.fromTo("#s4-poster", { scale: 2.6, rotation: 10, opacity: 0 }, { scale: 1, rotation: -3, opacity: 1, duration: 0.5, ease: "power3.out" }, 26.3);
+        tl.fromTo("#s4-poster", { rotation: -3 }, { rotation: 0, duration: 0.25, immediateRender: false }, 27.2);
+        tl.fromTo("#s4-dolu2", { x: 160 }, { x: 0, duration: 0.6, ease: "power2.out" }, 26.1);
+        tl.fromTo("#s4-wall", { scale: 1.1 }, { scale: 1.0, duration: 2.7, ease: "sine.out" }, 26.1);
+
+        // S5 Sunday rush
+        tl.fromTo("#s5-cal", { rotationX: -90, opacity: 0 }, { rotationX: 0, opacity: 1, duration: 0.4, ease: "back.out(2)" }, 28.85);
+        tl.fromTo("#s5-crowd .crowd-p", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.18, stagger: { each: 0.018, from: "start" } }, 28.8);
+        pop("#s5-counter", 29.5, 0.3);
+        count($("#s5-num"), 0, 200, 29.6, 1.0);
+        tl.fromTo("#s5-x2 .x2i", { scale: 0, opacity: 0, transformOrigin: "50% 50%" }, { scale: 1, opacity: 1, duration: 0.25, stagger: 0.07, ease: "back.out(3)" }, 30.0);
+        tl.fromTo("#s5-plates .plate", { x: 0, y: 0, rotation: 0 }, { x: (i) => 300 + i * 90, y: (i) => -500 - (i % 3) * 120, rotation: 360, duration: 0.6, stagger: 0.25, ease: "power1.out" }, 29.0);
+        tl.fromTo("#s5-cam", { scale: 1.0 }, { scale: 1.12, duration: 3.2, ease: "none" }, 28.8);
+        tl.fromTo("#d5 .d5-armL", { rotation: 0, svgOrigin: "90 360" }, { rotation: 25, duration: 0.15, yoyo: true, repeat: 19 }, 28.9);
+        tl.fromTo("#d5 .d5-armR", { rotation: 0, svgOrigin: "310 360" }, { rotation: -25, duration: 0.15, yoyo: true, repeat: 19 }, 28.95);
+
+        // S6 Bolu smug + loss
+        tl.fromTo("#s6-wcam", { scale: 1.0 }, { scale: 1.35, x: -260, y: -160, duration: 2.6, ease: "sine.inOut" }, 32.0);
+        tl.fromTo("#s6-bolu", { rotation: 0, transformOrigin: "50% 15%" }, { rotation: -4, duration: 0.3, yoyo: true, repeat: 5, ease: "sine.inOut" }, 32.8);
+        tl.fromTo("#b6 .b6-pick", { rotation: 0, svgOrigin: "228 244" }, { rotation: -14, duration: 0.25, yoyo: true, repeat: 7 }, 32.2);
+        tl.set("#s6-loss", { opacity: 0 }, 32.0);
+        tl.set("#s6-loss", { opacity: 1 }, 34.65);
+        tl.fromTo("#s6-lcam", { scale: 1.0 }, { scale: 1.12, duration: 2.75, ease: "sine.in" }, 34.65);
+        tl.fromTo("#s6-dolu-happy", { opacity: 1 }, { opacity: 0, duration: 0.5 }, 34.9);
+        count($("#s6-num"), 12000, -18400, 34.8, 1.0, (v) => (v < 0 ? "-₹" : "₹") + inr(Math.abs(v)));
+        tl.to("#s6-num", { color: "#d01010", duration: 0.1 }, 35.4);
+        tl.fromTo("#s6-line", { strokeDasharray: 1600, strokeDashoffset: 1600 }, { strokeDashoffset: 0, duration: 0.8, ease: "power2.in" }, 34.9);
+        tl.fromTo("#s6-arrow", { opacity: 0 }, { opacity: 1, duration: 0.1 }, 35.7);
+        tl.fromTo("#s6-stamp", { scale: 3, opacity: 0, rotation: -2 }, { scale: 1, opacity: 1, rotation: -10, duration: 0.25, ease: "power4.in" }, 35.8);
+        shake("#s6-loss", 36.05, 20, 9);
+        tl.fromTo("#s6-loss", { filter: "saturate(1) brightness(1)" }, { filter: "saturate(0.6) brightness(0.95)", duration: 0.8 }, 36.4);
+
+        // S7 LLM: dive, slam, letters expand, page vortex into brain
+        tl.fromTo("#s7-dive", { scale: 0.1, opacity: 1 }, { scale: 4, opacity: 0, duration: 0.8, ease: "power2.in" }, 37.4);
+        tl.fromTo("#s7-thappu", { scale: 2.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: "power4.in" }, 37.6);
+        shake("#s7-thappu", 37.9, 14, 7);
+        fadeOut("#s7-thappu", 40.4, 0.3);
+        tl.fromTo("#s7-llm-big", { scale: 0.2, opacity: 0, rotationX: 70 }, { scale: 1, opacity: 1, rotationX: 0, duration: 0.6, ease: "back.out(1.6)" }, 40.9);
+        tl.fromTo("#s7-words span", { opacity: 0, y: -60, scale: 0.4 }, { opacity: 1, y: 0, scale: 1, duration: 0.4, stagger: 0.35, ease: "back.out(2)" }, 42.3);
+        tl.fromTo("#s7-brain", { scale: 0.2, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.7, ease: "power3.out" }, 43.3);
+        tl.fromTo("#s7-pages .pg", { opacity: 0, scale: 1.4, rotation: 0 }, { opacity: 1, scale: 1, rotation: 200, duration: 0.3, stagger: 0.04 }, 43.8);
+        tl.to("#s7-pages .pg", { x: (i, el) => 500 - parseFloat(el.style.left), y: (i, el) => 900 - parseFloat(el.style.top), scale: 0.05, opacity: 0, rotation: 540, duration: 1.1, stagger: 0.04, ease: "power2.in" }, 44.1);
+        tl.fromTo("#s7-brain .glow", { scale: 1, opacity: 0.6, transformOrigin: "50% 50%" }, { scale: 1.25, opacity: 1, duration: 0.35, yoyo: true, repeat: 9, ease: "sine.inOut" }, 44.4);
+        tl.fromTo("#s7-brain .nodes circle", { fill: "#ffffff" }, { fill: "#9fd8ff", duration: 0.2, stagger: { each: 0.03, repeat: 3, yoyo: true } }, 44.5);
+        fadeIn("#s7-count", 44.2);
+        count($("#s7-num"), 0, 100000, 44.3, 2.6, (v) => inr(v));
+
+        // S8 next word prediction
+        pop("#s8-think", 48.8, 0.4);
+        fadeOut("#s8-think", 50.8);
+        fadeIn("#s8-sent", 51.0);
+        tl.set("#s8-fillword", { opacity: 0 }, 48.6);
+        tl.fromTo("#s8-opts .optrow", { opacity: 0, x: -80 }, { opacity: 1, x: 0, duration: 0.3, stagger: 0.18 }, 51.5);
+        tl.fromTo(["#s8-b1", "#s8-b2", "#s8-b3"], { scaleX: 0 }, { scaleX: 1, duration: 0.6, stagger: 0.12, ease: "power2.out" }, 51.7);
+        tl.fromTo("#s8-fillword", { opacity: 0, y: 280, scale: 0.6 }, { opacity: 1, y: 0, scale: 1, duration: 0.35, ease: "back.out(2.5)" }, 52.8);
+        tl.to(["#s8-o2", "#s8-o3"], { opacity: 0.25, duration: 0.3 }, 52.8);
+        fadeIn("#s8-kb", 53.9);
+        tl.fromTo("#s8-kb", { y: 140 }, { y: 0, duration: 0.4, ease: "power3.out" }, 53.9);
+        tl.to("#s8-opts", { opacity: 0, duration: 0.3 }, 55.8);
+        tl.to("#s8-sent", { opacity: 0, duration: 0.3 }, 55.8);
+        tl.to("#s8-kb", { scale: 1.12, y: -260, duration: 0.6, ease: "back.out(1.6)" }, 56.2);
+        tl.fromTo("#s8-aura", { opacity: 0, scale: 0.8, y: -260 }, { opacity: 1, scale: 1.08, y: -260, duration: 0.5 }, 56.3);
+        tl.fromTo("#s8-aura", { boxShadow: "0 0 60px 20px rgba(0,212,255,0.4)" }, { boxShadow: "0 0 140px 60px rgba(139,92,246,0.9)", duration: 0.3, yoyo: true, repeat: 5 }, 56.7);
+        tl.fromTo("#s8-power", { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(2)" }, 56.4);
+        pop("#s8-1000", 56.8, 0.4);
+        tl.set("#s8-aura", { opacity: 0 }, 48.6);
+        tl.set("#s8-power", { opacity: 0 }, 48.6);
+        tl.set("#s8-1000", { opacity: 0 }, 48.6);
+        tl.set("#s8-kb", { opacity: 0 }, 48.6);
+        tl.set("#s8-sent", { opacity: 0 }, 48.6);
+        tl.set("#s8-opts .optrow", { opacity: 0 }, 48.6);
+
+        // S9 missing info
+        tl.fromTo("#s9-dolu", { scale: 1.0 }, { scale: 1.08, duration: 2.1, ease: "sine.inOut" }, 58.4);
+        tl.fromTo("#s9-q", { scale: 0, rotation: -30 }, { scale: 1, rotation: 0, duration: 0.4, ease: "back.out(2.5)" }, 58.7);
+        tl.fromTo("#s9-dolu-shock", { opacity: 0 }, { opacity: 0, duration: 0.01 }, 58.4);
+        tl.set("#s9-split", { opacity: 0 }, 58.4);
+        tl.set("#s9-split", { opacity: 1 }, 60.5);
+        tl.fromTo("#s9-split > div:first-child", { x: -540 }, { x: 0, duration: 0.4, ease: "power3.out" }, 60.5);
+        tl.fromTo("#s9-split > div:last-child", { x: 540 }, { x: 0, duration: 0.4, ease: "power3.out" }, 60.5);
+        tl.fromTo("#s9-bq", { scale: 0.5, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.4, ease: "back.out(2)" }, 61.0);
+        tl.fromTo("#s9-bq", { y: 0 }, { y: -30, duration: 0.5, yoyo: true, repeat: 7, ease: "sine.inOut" }, 61.4);
+        tl.fromTo("#s9-card", { y: 80, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4 }, 61.2);
+        tl.fromTo("#s9-blank", { opacity: 1 }, { opacity: 0.15, duration: 0.3, yoyo: true, repeat: 13, ease: "steps(1)" }, 61.8);
+        tl.fromTo("#s9-warn", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(2)" }, 63.9);
+        tl.fromTo("#s9-warn", { backgroundColor: "#ffd34d" }, { backgroundColor: "#ff9933", duration: 0.25, yoyo: true, repeat: 7, ease: "steps(1)" }, 64.2);
+        tl.set("#s9-split", { opacity: 0 }, 66.65);
+        tl.set("#s9-q", { opacity: 0 }, 66.65);
+        tl.set("#s9-dolu-shock", { opacity: 1 }, 66.65);
+        tl.fromTo("#d9s .d9s-armR", { rotation: 0, svgOrigin: "320 360" }, { rotation: -150, duration: 0.25, ease: "power3.in" }, 66.75);
+        tl.fromTo("#s9-dolu", { x: 0 }, { x: -10, duration: 0.05, yoyo: true, repeat: 3 }, 67.0);
+        tl.fromTo("#s9-guess", { opacity: 0, scale: 0.3, rotation: 20 }, { opacity: 1, scale: 1, rotation: 6, duration: 0.45, ease: "back.out(2)" }, 68.3);
+        tl.set("#s9-guess", { opacity: 0 }, 58.4);
+
+        // S10 context cards
+        tl.fromTo("#s10-ctx", { y: -200, opacity: 0, scale: 1.6 }, { y: 0, opacity: 1, scale: 1, duration: 0.45, ease: "power4.out" }, 72.2);
+        tl.fromTo("#s10-sweep", { x: -300 }, { x: 1200, duration: 0.8, ease: "power1.inOut" }, 72.7);
+        tl.fromTo("#s10-box", { opacity: 0, y: 80 }, { opacity: 1, y: 0, duration: 0.4 }, 70.8);
+        tl.fromTo("#s10-cmp > div", { opacity: 0, x: -120 }, { opacity: 1, x: 0, duration: 0.35, stagger: 0.6 }, 74.0);
+        tl.to("#s10-cmp", { opacity: 0, duration: 0.3 }, 76.0);
+        [["#s10-c1", 76.3, -500], ["#s10-c2", 77.5, 0], ["#s10-c3", 78.7, 500]].forEach(([el, t, dx]) => {
+          tl.fromTo(el, { x: dx, y: -700, rotation: dx ? dx / 25 : -15, opacity: 0 }, { x: 0, y: 0, rotation: 0, opacity: 1, duration: 0.4, ease: "power3.out" }, t);
+          tl.to(el, { y: 150, scale: 0.85, duration: 0.2, yoyo: true, repeat: 1, ease: "power2.in" }, t + 0.4);
+        });
+        tl.fromTo("#s10-box", { boxShadow: "0 0 0 rgba(255,211,77,0)" }, { boxShadow: "0 0 120px 30px rgba(255,211,77,0.9)", duration: 0.4 }, 80.1);
+        tl.fromTo("#s10-brain", { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(2)" }, 80.2);
+        tl.to("#s10-brain .links", { stroke: "#3ce07a", opacity: 1, duration: 0.4 }, 80.4);
+        tl.to("#s10-brain .nodes", { fill: "#b6ffcf", duration: 0.4 }, 80.4);
+        tl.set(["#s10-c1", "#s10-c2", "#s10-c3", "#s10-brain", "#s10-ctx"], { opacity: 0 }, 70.6);
+
+        // S11 endless typing + teaser
+        tl.fromTo("#s11-scroll", { y: 0 }, { y: -2400, duration: 3.0, ease: "power1.in" }, 81.9);
+        tl.fromTo("#d11 .d11-armR", { rotation: 0, svgOrigin: "320 360" }, { rotation: -12, duration: 0.08, yoyo: true, repeat: 33 }, 82.0);
+        tl.fromTo("#s11-pile .sheet", { y: -900, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, stagger: 0.18, ease: "bounce.out" }, 82.4);
+        tl.fromTo("#s11-q", { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.35, ease: "back.out(3)" }, 83.1);
+        tl.set("#s11-tease", { opacity: 0 }, 81.9);
+        tl.set("#s11-tease", { opacity: 1 }, 84.75);
+        tl.fromTo("#s11-sil", { scale: 0.9, x: -30 }, { scale: 1.05, x: 30, duration: 2.1, ease: "sine.inOut" }, 84.75);
+        tl.fromTo("#s11-smoke", { scale: 0.8, opacity: 0.4 }, { scale: 1.2, opacity: 0.9, duration: 2.1 }, 84.75);
+        tl.fromTo("#s11-days .d", { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: 0.25, stagger: 0.06 }, 84.9);
+        tl.fromTo("#s11-d2", { boxShadow: "0 0 0 rgba(255,211,77,0)" }, { boxShadow: "0 0 70px rgba(255,211,77,1)", duration: 0.25, yoyo: true, repeat: 5, ease: "steps(1)" }, 85.3);
+        pop("#s11-tag", 85.4, 0.35);
+
+        // S12 outro over the real footage
+        tl.fromTo("#s12-lt", { x: -900 }, { x: 0, duration: 0.5, ease: "power3.out" }, 87.1);
+        tl.to("#s12-lt", { x: -900, duration: 0.35, ease: "power2.in" }, 89.6);
+        tl.fromTo("#s12-end", { opacity: 0, y: -80 }, { opacity: 1, y: 0, duration: 0.45, ease: "back.out(1.8)" }, 89.9);
+        tl.fromTo(["#s12-follow", "#s12-save"], { scale: 1 }, { scale: 1.1, duration: 0.3, yoyo: true, repeat: 5, stagger: 0.15, ease: "sine.inOut" }, 90.4);
+
+        window.__timelines["main"] = tl;
+      })();
+    </script>
+  </body>
+</html>
