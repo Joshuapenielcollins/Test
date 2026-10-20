@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>Dolu Bolu Cover</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "MontserratV"; src: url("assets/Montserrat-VF.ttf") format("truetype"); font-weight: 100 900; }
+      @font-face { font-family: "PoppinsXB"; src: url("assets/Poppins-ExtraBold.ttf") format("truetype"); font-weight: 800; }
+      @font-face { font-family: "PoppinsB"; src: url("assets/Poppins-Bold.ttf") format("truetype"); font-weight: 700; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #f4f1ec; }
+      #root { position: relative; width: 100%; height: 100%; overflow: hidden; }
+      .abs { position: absolute; }
+      .bg { inset: 0; background:
+          radial-gradient(60% 34% at 50% 66%, rgba(255,153,51,0.55), rgba(255,153,51,0) 100%),
+          radial-gradient(90% 40% at 50% 18%, rgba(255,201,60,0.18), transparent 70%),
+          linear-gradient(rgba(20,17,15,0.06) 1.5px, transparent 1.5px) 0 0 / 60px 60px,
+          linear-gradient(90deg, rgba(20,17,15,0.06) 1.5px, transparent 1.5px) 0 0 / 60px 60px,
+          #f4f1ec; }
+      .hl { font-family: "MontserratV"; font-weight: 900; text-transform: uppercase; letter-spacing: -2px; line-height: 0.98; }
+      .box { display: inline-block; padding: 6px 28px 14px; border-radius: 22px; box-shadow: 0 18px 40px rgba(0,0,0,0.25), inset 0 -6px 0 rgba(0,0,0,0.14); }
+      .card { background: #fff; border-radius: 28px; box-shadow: 0 1px 2px rgba(20,17,15,0.06), 0 10px 30px rgba(20,17,15,0.12), 0 40px 90px rgba(20,17,15,0.18); }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="cover" data-start="0" data-width="1080" data-height="1920" data-duration="1">
+      <div class="abs bg"></div>
+
+      <!-- creator in the reel's rounded card -->
+      <div class="abs" style="left:44px; right:44px; top:830px; height:1050px; border-radius:48px; overflow:hidden; box-shadow:0 1px 2px rgba(20,17,15,0.08), 0 20px 50px rgba(20,17,15,0.18), 0 60px 120px rgba(120,60,0,0.25);">
+        <img src="assets/hero-oneline.png" alt="" style="position:absolute; left:-10%; top:-10%; width:120%; height:auto; filter:blur(28px) saturate(1.1) brightness(0.95);" />
+        <img src="assets/hero-oneline.png" alt="" style="position:absolute; left:50%; top:-120px; width:860px; height:auto; margin-left:-430px; filter:contrast(1.05) saturate(1.06); -webkit-mask-image:linear-gradient(90deg, transparent 0, #000 70px, #000 calc(100% - 70px), transparent 100%); mask-image:linear-gradient(90deg, transparent 0, #000 70px, #000 calc(100% - 70px), transparent 100%);" />
+        <div style="position:absolute; inset:0; background:radial-gradient(110% 80% at 50% 35%, transparent 60%, rgba(10,6,2,0.3) 100%);"></div>
+      </div>
+
+      <!-- series badge -->
+      <div class="abs" style="left:0; right:0; top:280px; display:flex; justify-content:center;">
+        <div style="display:flex; align-items:center; gap:16px; padding:16px 34px; border-radius:999px; background:#14110f; color:#fff; box-shadow:0 14px 34px rgba(0,0,0,0.25);">
+          <span style="width:22px; height:22px; border-radius:50%; background:linear-gradient(135deg,#29d3ff,#7c5cff); display:block;"></span>
+          <span style="font-family:PoppinsB; font-size:32px; letter-spacing:3px;">VANGA AI KATHUKALAM</span>
+          <span style="font-family:PoppinsXB; font-size:32px; color:#ffc93c;">· DAY 1</span>
+        </div>
+      </div>
+
+      <!-- headline -->
+      <div class="abs" style="left:40px; right:40px; top:390px; text-align:center;">
+        <div class="hl" style="font-size:88px; color:#14110f;">ChatGPT oru line</div>
+        <div class="hl" style="font-size:88px; color:#14110f; margin-top:6px;">ezhudhuchu…</div>
+        <div style="margin-top:22px;"><span class="hl box" style="white-space:nowrap; font-size:132px; color:#fff; background:linear-gradient(180deg,#ff5a4f,#e0261a); transform:rotate(-3deg);">FULL LOSS!</span></div>
+      </div>
+
+
+      <!-- BUY 1 GET 1 FREE poster -->
+      <div class="abs card" style="left:24px; top:790px; width:230px; height:290px; transform:rotate(-9deg); background:linear-gradient(160deg,#fffaf0,#ffe9c7); display:flex; flex-direction:column; align-items:center; justify-content:center; border:6px solid #ff9933;">
+        <div style="font-family:PoppinsXB; font-size:60px; line-height:0.95; color:#3b1f0e;">BUY 1</div>
+        <div style="font-family:PoppinsXB; font-size:60px; line-height:0.95; color:#ff9933;">GET 1</div>
+        <div style="font-family:PoppinsXB; font-size:68px; line-height:0.95; color:#e0261a;">FREE!</div>
+      </div>
+
+      <!-- twins sticker -->
+      <div class="abs card" style="right:20px; top:770px; width:250px; padding:18px 18px 14px; transform:rotate(7deg); text-align:center;">
+        <img src="assets/twins.png" alt="Dolu and Bolu" style="width:100%; height:auto; display:block;" />
+        <div style="font-family:PoppinsXB; font-size:36px; color:#14110f; margin-top:6px;">DOLU BOLU</div>
+      </div>
+
+      <!-- crash arrow + 200 people -->
+      <div class="abs card" style="left:30px; top:1700px; padding:20px 30px; transform:rotate(-4deg); display:flex; align-items:center; gap:16px;">
+        <span style="font-family:PoppinsXB; font-size:64px; color:#14110f; line-height:1;">200</span>
+        <span style="font-family:PoppinsB; font-size:26px; color:rgba(20,17,15,0.6); line-height:1.15;">people<br />in queue</span>
+      </div>
+      <div class="abs card" style="right:30px; top:1720px; padding:20px 30px; transform:rotate(4deg); display:flex; align-items:center; gap:14px;">
+        <svg width="70" height="56" viewBox="0 0 70 56"><path d="M4 8 L24 22 L36 14 L62 46" fill="none" stroke="#e0261a" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><path d="M48 46 L64 48 L62 32" fill="none" stroke="#e0261a" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span style="font-family:PoppinsXB; font-size:60px; color:#e0261a; line-height:1;">₹0</span>
+      </div>
+    </div>
+    <script>
+      window.__timelines["cover"] = gsap.timeline({ paused: true });
+    </script>
+  </body>
+</html>
