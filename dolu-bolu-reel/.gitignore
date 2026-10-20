@@ -2,3 +2,4 @@
 renders/
 render.log
 node_modules/
+__pycache__/
