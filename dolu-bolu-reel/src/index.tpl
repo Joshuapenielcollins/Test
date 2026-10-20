@@ -9,6 +9,7 @@
       @font-face { font-family: "PoppinsXB"; src: url("assets/fonts/Poppins-ExtraBold.ttf") format("truetype"); font-weight: 800; }
       @font-face { font-family: "PoppinsB"; src: url("assets/fonts/Poppins-Bold.ttf") format("truetype"); font-weight: 700; }
       @font-face { font-family: "PoppinsSB"; src: url("assets/fonts/Poppins-SemiBold.ttf") format("truetype"); font-weight: 600; }
+      @font-face { font-family: "MontserratV"; src: url("assets/fonts/Montserrat-VF.ttf") format("truetype"); font-weight: 100 900; }
       @font-face { font-family: "PoppinsM"; src: url("assets/fonts/Poppins-Medium.ttf") format("truetype"); font-weight: 500; }
       :root {
         --saffron: #ff9933; --gold: #ffb627; --brown: #3b1f0e; --ink: #14110f; --paper: #f4f1ec;
@@ -67,15 +68,16 @@
 
       /* captions: script style (white, black stroke, saffron key words), word-by-word pop */
       #captions { z-index: 6; pointer-events: none; }
-      .cap { position: absolute; left: 50px; right: 50px; display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline; gap: 0 22px; opacity: 0; text-align: center; }
+      .cap { position: absolute; left: 40px; right: 40px; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px 18px; opacity: 0; text-align: center; }
       .cap.full { top: 1370px; }
       .cap.split { top: 772px; }
-      .cap .w { display: inline-block; font-family: "PoppinsXB"; font-size: 84px; line-height: 1.1; color: #fff; paint-order: stroke fill; -webkit-text-stroke: 14px #0b0806; text-shadow: 0 10px 30px rgba(0,0,0,0.35); transform-origin: 50% 85%; }
-      .cap.split .w { font-size: 70px; -webkit-text-stroke: 12px #0b0806; }
-      .cap .w.k { color: var(--gold); }
-      .cap .w.r { color: var(--red); }
-      .cap.big .w { font-size: 116px; }
-      .cap.split.big .w { font-size: 84px; }
+      .cap .w { display: inline-block; font-family: "MontserratV"; font-weight: 900; text-transform: uppercase; letter-spacing: -1px; font-size: 76px; line-height: 1.08; color: #fff; paint-order: stroke fill; -webkit-text-stroke: 12px #0b0806; text-shadow: 0 10px 28px rgba(0,0,0,0.4); transform-origin: 50% 85%; }
+      .cap.split .w { font-size: 62px; -webkit-text-stroke: 10px #0b0806; }
+      .cap .w.k, .cap .w.r { -webkit-text-stroke: 0; padding: 4px 22px 8px; border-radius: 16px; text-shadow: none; box-shadow: 0 12px 30px rgba(0,0,0,0.35), inset 0 -4px 0 rgba(0,0,0,0.12); }
+      .cap .w.k { color: #1a1206; background: linear-gradient(180deg, #ffc93c, #ff9f1c); }
+      .cap .w.r { color: #fff; background: linear-gradient(180deg, #ff5a4f, #e0261a); }
+      .cap.big .w { font-size: 104px; }
+      .cap.split.big .w { font-size: 78px; }
     </style>
   </head>
   <body>
@@ -94,7 +96,8 @@
       <!-- 200 people: dot-matrix data viz -->
       <section id="p1" class="panel clip" data-start="{{T:2.4}}" data-duration="{{D:2.4:5.1}}" data-track-index="2"><div class="pz">
         <div class="abs solid" id="p1-card" style="left:60px; right:60px; top:70px; height:700px; padding:46px 54px;">
-          <div class="eyebrow">Outside Dolu Biryani Kadai</div>
+          <div class="abs" style="right:34px; top:18px; height:150px;"><img src="assets/twins.png" alt="Dolu and Bolu" style="display:block; height:100%; width:auto; filter:drop-shadow(0 14px 22px rgba(20,17,15,0.22));" /></div>
+          <div class="eyebrow">Outside Dolu Bolu Biryani Kadai</div>
           <div style="display:flex; align-items:baseline; gap:18px; margin-top:6px;"><span class="xb" id="p1-num" style="font-size:150px; line-height:1; letter-spacing:-4px;">0</span><span class="b" style="font-size:44px; color:rgba(20,17,15,0.55);">people waiting</span></div>
           <div id="p1-grid" style="display:grid; grid-template-columns:repeat(20, 1fr); gap:10px; margin-top:34px;"></div>
         </div>
@@ -105,8 +108,8 @@
         <div class="abs tech" id="p2-card" style="left:60px; right:60px; top:70px; height:700px; padding:56px 60px; overflow:hidden;">
           <div class="abs" style="right:-120px; top:-160px; width:520px; height:520px; border-radius:50%; background:radial-gradient(circle, rgba(124,92,255,0.55), transparent 65%);"></div>
           <div class="eyebrow" style="color:rgba(255,255,255,0.55);">5-day series</div>
-          <div class="mask xb" style="font-size:118px; line-height:1.05; color:#fff; margin-top:10px;"><span id="p2-t1">AI na</span></div>
-          <div class="mask xb" style="font-size:118px; line-height:1.05; margin-top:-6px;"><span id="p2-t2" style="background:linear-gradient(90deg,var(--cyan),var(--violet)); -webkit-background-clip:text; background-clip:text; color:transparent;">enna?</span></div>
+          <div class="mask xb" style="font-size:118px; line-height:1.05; color:#fff; margin-top:10px;"><span id="p2-t1">Vanga AI</span></div>
+          <div class="mask xb" style="font-size:118px; line-height:1.05; margin-top:-6px;"><span id="p2-t2" style="background:linear-gradient(90deg,var(--cyan),var(--violet)); -webkit-background-clip:text; background-clip:text; color:transparent;">Kathukalam</span></div>
           <div class="abs" style="left:60px; right:60px; top:470px; height:120px;">
             <div class="abs" style="left:40px; right:40px; top:38px; height:6px; border-radius:3px; background:rgba(255,255,255,0.12);"></div>
             <div class="abs" id="p2-prog" style="left:40px; width:100%; max-width:calc(100% - 80px); top:38px; height:6px; border-radius:3px; background:linear-gradient(90deg,var(--cyan),var(--violet)); transform-origin:0 50%;"></div>
@@ -115,12 +118,12 @@
         </div>
       </div></section>
 
-      <!-- Dolu Anna profile, then the AI chat on a phone -->
+      <!-- Dolu Bolu profile, then the AI chat on a phone -->
       <section id="p3" class="panel clip" data-start="{{T:11.0}}" data-duration="{{D:11.0:19.4}}" data-track-index="2"><div class="pz">
         <div class="abs solid" id="p3-profile" style="left:110px; right:110px; top:150px; height:480px; padding:50px; display:flex; flex-direction:column; align-items:center; text-align:center;">
-          <div style="width:170px; height:170px; border-radius:50%; background:conic-gradient(from 200deg, var(--saffron), var(--gold), #ff6a3d, var(--saffron)); padding:7px;"><div style="width:100%; height:100%; border-radius:50%; background:#fff6e8; display:grid; place-items:center; font-size:96px;">🍛</div></div>
-          <div class="xb" style="font-size:64px; margin-top:22px; line-height:1;">Dolu Anna</div>
-          <div class="m" style="font-size:30px; color:rgba(20,17,15,0.55); margin-top:10px;">Owner · Dolu Biryani Kadai</div>
+          <div style="height:230px;"><img src="assets/twins.png" alt="Dolu and Bolu" style="display:block; height:100%; width:auto; filter:drop-shadow(0 14px 22px rgba(20,17,15,0.22));" /></div>
+          <div class="xb" style="font-size:64px; margin-top:14px; line-height:1;">Dolu Bolu</div>
+          <div class="m" style="font-size:30px; color:rgba(20,17,15,0.55); margin-top:10px;">Twin owners · Dolu Bolu Biryani Kadai</div>
           <div style="display:flex; gap:14px; margin-top:24px;"><span class="chip" style="background:#fff3df; color:#a8560c;">🔥 Weekend rush</span><span class="chip" style="background:#eef3ff; color:#2d5bd8;">Needs a poster</span></div>
         </div>
         <div class="phone" id="p3-phone" style="left:305px; top:60px;">
@@ -138,7 +141,7 @@
         <svg class="abs" viewBox="-540 -420 1080 840" style="left:0; top:0; width:1080px; height:840px;"><g id="p4-rays"></g></svg>
         <div id="p4-conf" class="abs" style="left:0; top:0; width:1080px; height:840px;"></div>
         <div class="abs" id="p4-poster" style="left:250px; top:70px; width:580px; height:700px; border-radius:28px; background:linear-gradient(160deg,#fffaf0,#ffe9c7); box-shadow:var(--shadow); overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; border:1.5px solid rgba(255,255,255,0.9);">
-          <div class="eyebrow" style="color:#a8560c;">Dolu Biryani · Weekend</div>
+          <div class="eyebrow" style="color:#a8560c;">Dolu Bolu Biryani · Weekend</div>
           <div class="xb" style="font-size:150px; line-height:0.95; color:var(--brown); margin-top:18px;">BUY 1</div>
           <div class="xb" style="font-size:150px; line-height:0.95; color:var(--saffron);">GET 1</div>
           <div class="xb" style="font-size:168px; line-height:0.95; background:linear-gradient(180deg,#ff5a3d,#e0261a); -webkit-background-clip:text; background-clip:text; color:transparent;">FREE!</div>
@@ -146,7 +149,7 @@
         </div>
       </div></section>
 
-      <!-- Sunday rush, then Bolu Anna -->
+      <!-- Sunday rush, then the twins check the day -->
       <section id="p5" class="panel clip" data-start="{{T:28.8}}" data-duration="{{D:28.8:34.6}}" data-track-index="2"><div class="pz">
         <div class="abs solid" id="p5-cal" style="left:90px; top:110px; width:330px; height:360px; overflow:hidden; transform-origin:50% 0%;">
           <div style="height:96px; background:linear-gradient(180deg,#ff5a4f,#e0261a); display:flex; align-items:center; justify-content:center;" class="b"><span style="color:#fff; font-size:30px; letter-spacing:6px;">WEEKEND</span></div>
@@ -160,11 +163,11 @@
         </div>
         <div id="p5-x2" class="abs" style="left:90px; right:90px; top:510px; height:240px; display:flex; flex-wrap:wrap; gap:14px; align-content:flex-start;"></div>
         <div class="abs solid" id="p5-bolu" style="left:90px; right:90px; top:150px; height:520px; padding:50px; display:flex; gap:44px; align-items:center;">
-          <div style="width:220px; height:220px; flex:none; border-radius:50%; background:conic-gradient(from 140deg,#1f5b3a,#3e9a62,#1f5b3a); padding:7px;"><div style="width:100%; height:100%; border-radius:50%; background:#eef7f1; display:grid; place-items:center; font-size:120px;">😏</div></div>
+          <div style="height:300px; flex:none;"><img src="assets/twins.png" alt="Dolu and Bolu" style="display:block; height:100%; width:auto; filter:drop-shadow(0 14px 22px rgba(20,17,15,0.22));" /></div>
           <div>
-            <div class="eyebrow">Opposite shop</div>
-            <div class="xb" style="font-size:72px; line-height:1.05;">Bolu Anna</div>
-            <div class="m" style="font-size:32px; color:rgba(20,17,15,0.6); margin-top:10px; line-height:1.35;">Watching. Smiling. Not running any offer.</div>
+            <div class="eyebrow">Sunday night</div>
+            <div class="xb" style="font-size:72px; line-height:1.05;">Dolu Bolu</div>
+            <div class="m" style="font-size:32px; color:rgba(20,17,15,0.6); margin-top:10px; line-height:1.35;">Sitting down to count the day’s sales…</div>
           </div>
         </div>
       </div></section>
@@ -173,6 +176,10 @@
       <section id="p6" class="panel clip" data-start="{{T:40.4}}" data-duration="{{D:40.4:48.6}}" data-track-index="2"><div class="pz">
         <div class="abs tech" style="left:60px; right:60px; top:70px; height:700px; overflow:hidden;">
           <div class="abs" style="left:-160px; bottom:-220px; width:640px; height:640px; border-radius:50%; background:radial-gradient(circle, rgba(41,211,255,0.35), transparent 65%);"></div>
+          <div class="abs" id="p6-intro" style="left:0; right:0; top:170px; display:flex; flex-direction:column; align-items:center; gap:22px;">
+            <div style="display:flex; align-items:center; gap:22px;"><div style="width:96px; height:96px; border-radius:26px; background:linear-gradient(135deg,var(--cyan),var(--violet)); box-shadow:0 0 50px rgba(124,92,255,0.7);"></div><span class="xb" style="font-size:104px; color:#fff;">ChatGPT</span></div>
+            <div class="b" style="font-size:44px; color:#cfd6ff;">pinnaadi enna irukku?</div>
+          </div>
           <div class="abs" id="p6-letters" style="left:0; right:0; top:90px; display:flex; justify-content:center; gap:10px;">
             <div class="xb" style="font-size:230px; line-height:1; color:#fff;"><span class="p6-l">L</span><span class="p6-l">L</span><span class="p6-l" style="background:linear-gradient(90deg,var(--cyan),var(--violet)); -webkit-background-clip:text; background-clip:text; color:transparent;">M</span></div>
           </div>
@@ -302,14 +309,14 @@
       </div>
       <div class="overlay clip" id="o8" data-start="{{T:84.7}}" data-duration="{{D:84.7:86.9}}" data-track-index="3">
         <div class="abs glass" id="o8-card" style="left:110px; right:110px; top:120px; padding:34px 40px;">
-          <div class="eyebrow">AI series progress</div>
+          <div class="eyebrow">Vanga AI Kathukalam</div>
           <div id="o8-days" style="display:flex; gap:16px; margin-top:18px;"></div>
         </div>
       </div>
       <div class="overlay clip" id="o9" data-start="{{T:86.9}}" data-duration="{{D:86.9:89.7}}" data-track-index="3">
         <div class="abs glass" id="o9-card" style="left:90px; top:130px; padding:24px 40px 24px 24px; display:flex; align-items:center; gap:22px;">
           <div style="width:92px; height:92px; border-radius:24px; background:linear-gradient(135deg,var(--saffron),var(--gold)); display:grid; place-items:center;" class="xb"><span style="font-size:40px; color:#fff;">JC</span></div>
-          <div><div class="xb" style="font-size:50px; line-height:1;">Joshua Collins</div><div class="m" style="font-size:28px; color:rgba(20,17,15,0.6); margin-top:6px;">AI Series · Day 1 of 5</div></div>
+          <div><div class="xb" style="font-size:50px; line-height:1;">Joshua Collins</div><div class="m" style="font-size:28px; color:rgba(20,17,15,0.6); margin-top:6px;">Vanga AI Kathukalam · Day 1 of 5</div></div>
         </div>
       </div>
       <div class="overlay clip" id="o10" data-start="{{T:89.7}}" data-duration="{{D:89.7:92.2}}" data-track-index="3">
@@ -413,7 +420,7 @@
         let docs = "";
         for (let i = 0; i < 16; i++) docs += `<div class="p6-doc" style="position:absolute; left:${(-120 - dr() * 60).toFixed(0)}px; top:${(120 + dr() * 460).toFixed(0)}px; width:74px; height:96px; border-radius:10px; background:#fff; box-shadow:0 8px 20px rgba(0,0,0,0.35); background-image:repeating-linear-gradient(180deg, transparent 0 12px, #cfd3e6 12px 16px); background-size:52px 100%; background-position:11px 14px; background-repeat:no-repeat;"></div>`;
         $("#p6-docs").innerHTML = docs;
-        $("#p10-scroll").textContent = "Naan Dolu, biryani kadai vechirukken. Chicken biryani ₹180, mutton ₹260. Rice kilo ₹90, chicken kilo ₹220, gas ₹1,100, 3 staff salary. Weekend la 150 plate pogum, margin 22%. Customers college pasanga. Budget ₹2,000. Goal: profit increase. Poster A3, Tamil + English, Bolu kadai offer vida better-ah irukkanum, aana loss aagakoodadhu… ".repeat(5);
+        $("#p10-scroll").textContent = "Naanga Dolu Bolu, twins, biryani kadai vechirukkom. Chicken biryani ₹180, mutton ₹260. Rice kilo ₹90, chicken kilo ₹220, gas ₹1,100, 3 staff salary. Weekend la 150 plate pogum, margin 22%. Customers college pasanga. Budget ₹2,000. Goal: profit increase. Poster A3, Tamil + English, Bolu kadai offer vida better-ah irukkanum, aana loss aagakoodadhu… ".repeat(5);
         let od = "";
         for (let i = 1; i <= 5; i++) od += `<div class="o8-d" style="flex:1; height:110px; border-radius:24px; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:PoppinsXB; ${i === 1 ? "background:linear-gradient(135deg,var(--saffron),var(--gold)); color:#fff;" : i === 2 ? "background:#fff; border:3px solid var(--ink);" : "background:rgba(20,17,15,0.06); color:rgba(20,17,15,0.35);"}"><span style="font-size:20px; letter-spacing:3px;">DAY</span><span style="font-size:42px; line-height:1;">${i === 1 ? "✓" : i === 2 ? "2" : "🔒"}</span></div>`;
         $("#o8-days").innerHTML = od;
@@ -427,12 +434,12 @@
         const CAPS = [
           [0.15, 1.3, "ChatGPT eludhuna"], [1.3, 2.4, "*ORU LINE*", "big"], [2.4, 3.6, "!200 PERU!", "big"], [3.6, 5.1, "veliya nikkuraanga..."],
           [5.15, 6.6, "Aana *PROFIT*"], [6.6, 8.1, "!₹0!", "big"],
-          [8.3, 9.4, "AI na enna?"], [9.4, 10.95, "*DAY 1*", "big"],
-          [11.2, 13.95, "*Dolu Anna*"], [14.2, 15.6, "weekend offer poster"], [15.6, 19.3, "oru *CATCHY* offer ezhudhi kudu"],
+          [8.3, 9.4, "*Vanga AI Kathukalam*"], [9.4, 10.95, "*DAY 1*", "big"],
+          [11.2, 13.95, "*Dolu Bolu*"], [14.2, 15.6, "weekend offer poster"], [15.6, 19.3, "oru *CATCHY* offer ezhudhi kudu"],
           [19.5, 21.2, "Stylish-ah ezhudhuchu"], [21.4, 23.5, "*BUY 1 GET 1 FREE!*"], [23.7, 27.4, "happy-ah print panni"], [27.4, 28.7, "*ottinaaru*"],
           [28.85, 29.6, "*SUNDAY*", "big"], [29.6, 30.6, "!200 PERU!", "big"], [30.6, 31.95, "*QUEUE-LA!*", "big"],
-          [32.1, 33.2, "Edhirla Bolu Anna..."], [33.2, 34.5, "sirichitu irundhaan 😏"], [34.7, 35.8, "Evening kanakku paathaa..."], [35.8, 37.35, "!FULL LOSS!", "big"],
-          [37.5, 40.3, "Thappu AI-oda *ILLA*"], [40.9, 42.3, "*LLM*", "big"], [42.3, 45.6, "Large Language Model"], [45.8, 46.7, "Lakhs of pages padicha"], [46.7, 48.5, "*ORU BRAIN* 🧠"],
+          [32.1, 34.5, "Appo dhaan *Dolu Bolu*..."], [34.7, 35.8, "Evening kanakku paathaa..."], [35.8, 37.35, "!FULL LOSS!", "big"],
+          [37.5, 40.3, "Thappu AI-oda *ILLA*"], [40.9, 43.0, "ChatGPT pinnaadi irukradhu"], [43.0, 43.6, "*LLM*", "big"], [43.6, 45.6, "Large Language Model"], [45.8, 46.7, "Lakhs of pages padicha"], [46.7, 48.5, "*ORU BRAIN* 🧠"],
           [48.8, 50.75, "Adhu *YOSIKALA*"], [51.2, 52.3, "adutha best *WORD*"], [52.3, 53.7, "*PREDICT* pannudhu"], [53.9, 56.1, "Keyboard suggestion"], [56.3, 58.35, "*SUPER POWERFUL* version ⚡"],
           [58.45, 62.6, "*PROFIT MARGIN* enna nu"], [62.6, 64.9, "adhuku eppadi theriyum?"], [64.95, 66.55, "Avar *SOLLAVE ILLAYE* 🤦"], [66.7, 70.5, "Direct-ah *PREDICT* panni"],
           [70.8, 73.5, "*CONTEXT* dhaan"], [73.5, 76.2, "answer-a *DECIDE* pannum"], [76.3, 77.5, "Yaaru neenga?"], [77.5, 78.7, "Budget enna?"], [78.7, 80.0, "Goal enna?"], [80.1, 81.8, "*ELLAM SOLLUNGA* ✅"],
@@ -448,7 +455,7 @@
           d.innerHTML = parts.flatMap((p) => {
             const cls = p[0] === "*" ? " k" : p[0] === "!" ? " r" : "";
             const txt = cls === " k" ? p.replace(/^\*([^*]+)\*/, "$1") : cls ? p.replace(/^!([^!]+)!/, "$1") : p;
-            return txt.split(" ").map((w) => `<span class="w${cls}">${w}</span>`);
+            return cls ? [`<span class="w${cls}">${txt}</span>`] : txt.split(" ").map((w) => `<span class="w">${w}</span>`);
           }).join("");
           capRoot.appendChild(d);
         });
@@ -536,8 +543,10 @@
         tl.fromTo("#p5-bolu", { rotation: 0 }, { rotation: -1.5, duration: 0.6, yoyo: true, repeat: 1, ease: "sine.inOut" }, T(33.0));
 
         // ---- P6: LLM ----
-        tl.fromTo(".p6-l", { yPercent: 120, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.7, ease: E, stagger: 0.08 }, T(40.85));
-        tl.fromTo("#p6-words span", { y: 30, opacity: 0, filter: "blur(8px)" }, { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.5, ease: E, stagger: 0.25 }, T(42.3));
+        enter("#p6-intro", T(40.6), { y: 40 });
+        tl.to("#p6-intro", { y: -60, opacity: 0, filter: "blur(12px)", duration: 0.35, ease: "power2.in" }, T(42.75));
+        tl.fromTo(".p6-l", { yPercent: 120, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.7, ease: E, stagger: 0.08 }, T(43.0));
+        tl.fromTo("#p6-words span", { y: 30, opacity: 0, filter: "blur(8px)" }, { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.5, ease: E, stagger: 0.35 }, T(43.6));
         tl.to(["#p6-letters", "#p6-words"], { opacity: 0, scale: 0.9, filter: "blur(12px)", duration: 0.4, ease: "power2.in" }, T(45.4));
         tl.set(["#p6-net", "#p6-count"], { opacity: 0 }, T(40.4));
         tl.to(["#p6-net", "#p6-count"], { opacity: 1, duration: 0.3 }, T(45.6));
