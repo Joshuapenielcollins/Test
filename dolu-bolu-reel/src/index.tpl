@@ -447,7 +447,7 @@
           const parts = c[2].match(/\*[^*]+\*[^ ]*|![^!]+!|[^ ]+/g) || [];
           d.innerHTML = parts.flatMap((p) => {
             const cls = p[0] === "*" ? " k" : p[0] === "!" ? " r" : "";
-            const txt = cls ? p.replace(/^[*!]([^*!]+)[*!]/, "$1") : p;
+            const txt = cls === " k" ? p.replace(/^\*([^*]+)\*/, "$1") : cls ? p.replace(/^!([^!]+)!/, "$1") : p;
             return txt.split(" ").map((w) => `<span class="w${cls}">${w}</span>`);
           }).join("");
           capRoot.appendChild(d);
