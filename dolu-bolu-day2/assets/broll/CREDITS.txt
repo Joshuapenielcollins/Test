@@ -1,0 +1,3 @@
+biryani.jpg: "Hyderabadi Dum Biryani", lead image of the English Wikipedia article "Biryani", from Wikimedia Commons (see the file page for author and licence).
+skills-screenrec.mp4 / skillmd-screenrec.mp4: screen recordings of claude.com/blog/skills and platform.claude.com Agent Skills docs.
+day1-*.mp4: clips from the Day 1 reel.
