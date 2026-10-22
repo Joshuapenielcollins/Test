@@ -65,13 +65,15 @@
       #captions { z-index: 6; pointer-events: none; }
       .cap { position: absolute; left: 40px; right: 40px; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px 18px; opacity: 0; text-align: center; }
       .cap.full { top: 1370px; }
-      .cap.split { top: 772px; }
+      .cap.split { top: 712px; }
       .cap .w { display: inline-block; transform-origin: 50% 85%; }
       /* base: bold caps, outline, highlight box */
       .st-base .w { font-family: "MontserratV"; font-weight: 900; text-transform: uppercase; letter-spacing: -1px; font-size: 74px; line-height: 1.08; color: #fff; paint-order: stroke fill; -webkit-text-stroke: 12px #0b0806; text-shadow: 0 10px 28px rgba(0,0,0,0.4); }
       .cap.split.st-base .w { font-size: 60px; -webkit-text-stroke: 10px #0b0806; }
       .st-base .w.k, .st-base .w.r { -webkit-text-stroke: 0; padding: 4px 22px 8px; border-radius: 16px; text-shadow: none; box-shadow: 0 12px 30px rgba(0,0,0,0.35), inset 0 -4px 0 rgba(0,0,0,0.12); }
       .st-base .w.k { color: #1a1206; background: linear-gradient(180deg, #ffc93c, #ff9f1c); }
+      /* highlight boxes never take the outline, whatever the layout */
+      .cap.st-base .w.k, .cap.st-base .w.r, .cap.st-hook .w.r { -webkit-text-stroke: 0 !important; paint-order: normal; }
       .st-base .w.r { color: #fff; background: linear-gradient(180deg, #ff5a4f, #e0261a); }
       /* hook: oversized, tighter */
       .st-hook .w { font-family: "MontserratV"; font-weight: 900; text-transform: uppercase; letter-spacing: -2px; font-size: 92px; line-height: 1.02; color: #fff; paint-order: stroke fill; -webkit-text-stroke: 14px #0b0806; text-shadow: 0 14px 34px rgba(0,0,0,0.45); }
@@ -490,7 +492,7 @@
         // ---- captions by style ----
         CAPS.forEach((c, i) => {
           const el = $("#cap" + i), ws = el.querySelectorAll(".w"), t0 = T(c[0]), t1 = T(c[1]);
-          const st = Math.min(0.1, ((t1 - t0) * 0.45) / Math.max(1, ws.length));
+          const st = Math.min(0.06, ((t1 - t0) * 0.3) / Math.max(1, ws.length));
           tl.set(el, { opacity: 1 }, t0);
           if (c[3] === "editorial") {
             tl.fromTo(ws, { y: 24, opacity: 0, filter: "blur(10px)" }, { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.55, ease: "power3.out", stagger: st * 1.4 }, t0);
@@ -508,7 +510,7 @@
             tl.fromTo(el, { x: -10 }, { x: 10, duration: 0.03, repeat: 5, yoyo: true, ease: "none" }, t0 + 0.05);
             tl.set(el, { x: 0 }, t0 + 0.25);
           } else {
-            tl.fromTo(ws, { y: 40, scale: 0.6, opacity: 0, filter: "blur(8px)" }, { y: 0, scale: 1, opacity: 1, filter: "blur(0px)", duration: 0.3, ease: "back.out(2.2)", stagger: st }, t0);
+            tl.fromTo(ws, { y: 30, scale: 0.7, opacity: 0, filter: "blur(3px)" }, { y: 0, scale: 1, opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "back.out(2.2)", stagger: st }, t0);
           }
           tl.set(el, { opacity: 0 }, t1);
         });
