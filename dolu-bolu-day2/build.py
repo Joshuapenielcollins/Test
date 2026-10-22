@@ -13,7 +13,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).parent
 KEEP = json.loads((ROOT / "assets/keep.json").read_text())
-SPEED = 1.1
+SPEED = 1.05
 
 
 def T(t):
